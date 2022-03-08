@@ -6,20 +6,17 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-public class Manufacturer {
+public class ModelStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    @Setter
-    private Integer manufacturer_id;
+    private Long id;
 
     @Getter
     @Setter
     @Column(unique = true)
-    private String manufacturer_name;
+    private String name;
 
-    public Manufacturer(){
-
+    public ModelStatus() {
     }
 }
 

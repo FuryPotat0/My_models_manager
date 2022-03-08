@@ -14,24 +14,24 @@ public class ManufacturerController {
     @Autowired
     private ManufacturerService manufacturerService;
 
-    @GetMapping("/")
+    @GetMapping("/Manufacturers")
     public String getAll(Model model){
         List<Manufacturer> manufacturerList = manufacturerService.getAll();
         model.addAttribute("manufacturerList", manufacturerList);
         model.addAttribute("manufacturersSize", manufacturerList.size());
-        return "index";
+        return "manufacturers";
     }
 
-    @RequestMapping("/delete/{id}")
+    @RequestMapping("/Manufacturers/delete/{id}")
     public String deleteManufacturer(@PathVariable int id){
         manufacturerService.delete(id);
-        return "redirect:/";
+        return "redirect:/Manufacturers";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/Manufacturers/add")
     public String addManufacturer(@ModelAttribute Manufacturer manufacturer){
         manufacturerService.save(manufacturer);
-        return "redirect:/";
+        return "redirect:/Manufacturers";
     }
 }
 
