@@ -14,7 +14,7 @@
         <tr>
             <td>
                 <label>manufacturer_name</label>
-                <input type="text" name="manufacturer_name">
+                <input type="text" name="name">
             </td>
             <td>
                 <input type="submit" value="add">
@@ -31,10 +31,10 @@
         <td>Delete from list</td>
     </tr>
     <tr th:each="manufacturer : ${manufacturerList}">
-        <td><span th:text="${manufacturer.manufacturer_id}">ID</span></td>
-        <td><span th:text="${manufacturer.manufacturer_name}">Name</span></td>
-        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.manufacturer_id}">Delete</a></td>
-<!--        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.manufacturer_id}">Delete</a></td>-->
+        <td><span th:text="${manufacturer.id}">ID</span></td>
+        <td><span th:text="${manufacturer.name}">Name</span></td>
+        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.id}">Delete</a></td>
+<!--        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.id}">Delete</a></td>-->
     </tr>
 </table>
 

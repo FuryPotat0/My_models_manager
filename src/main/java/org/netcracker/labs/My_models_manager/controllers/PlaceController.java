@@ -1,12 +1,12 @@
 package org.netcracker.labs.My_models_manager.controllers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.netcracker.labs.My_models_manager.entities.Place;
 import org.netcracker.labs.My_models_manager.entities.Room;
 import org.netcracker.labs.My_models_manager.exceptions.NoSuitableRoomException;
 import org.netcracker.labs.My_models_manager.services.PlaceService;
 import org.netcracker.labs.My_models_manager.services.RoomService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +26,7 @@ public class PlaceController {
     private RoomService roomService;
 
     private String errorText = "";
-    private static final Logger LOGGER = LogManager.getLogger("PlacesLogger");
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceController.class);
 
     @GetMapping("/places")
     public String getAll(@RequestParam(value = "name", required = false) String name, Model model){
@@ -36,7 +36,7 @@ public class PlaceController {
         if (name != null){
             places = placeService.findAllByName(name);
             rooms = roomService.getAll();
-            LOGGER.info(places.size());
+            LOGGER.info(String.valueOf(places.size()));
             model.addAttribute("placeNumber", places.size());
             model.addAttribute("placeList", places);
             model.addAttribute("roomList", rooms);
