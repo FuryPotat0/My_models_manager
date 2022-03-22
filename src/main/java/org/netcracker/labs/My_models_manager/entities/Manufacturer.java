@@ -1,22 +1,21 @@
-package org.netcracker.labs.My_models_manager.Entities;
+package org.netcracker.labs.My_models_manager.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-public class ModelStatus {
+@Getter
+@Setter
+@NoArgsConstructor
+public class Manufacturer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 
-    @Getter
-    @Setter
     @Column(unique = true)
     private String name;
-
-    public ModelStatus() {
-    }
 }
 

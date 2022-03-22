@@ -1,6 +1,6 @@
-package org.netcracker.labs.My_models_manager.Repositories;
+package org.netcracker.labs.My_models_manager.repositories;
 
-import org.netcracker.labs.My_models_manager.Entities.Place;
+import org.netcracker.labs.My_models_manager.entities.Place;
 import org.springframework.data.repository.CrudRepository;
 
 public interface PlaceRepository extends CrudRepository<Place, Long> {

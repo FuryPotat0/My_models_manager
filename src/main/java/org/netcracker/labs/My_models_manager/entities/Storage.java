@@ -1,34 +1,27 @@
-package org.netcracker.labs.My_models_manager.Entities;
+package org.netcracker.labs.My_models_manager.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-public class Place {
+@Getter
+@Setter
+@NoArgsConstructor
+public class Storage {
     @Id
-    @Getter
-    @Setter
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true)
-    @Getter
-    @Setter
+    @Column
     private String name;
 
     @Column
-    @Getter
-    @Setter
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @Getter
-    @Setter
-    private Room room;
-
-    public Place() {
-    }
+    private Place place;
 }
 

@@ -9,7 +9,7 @@
 <body>
 <header th:insert="header :: header"></header>
 <h3>Add manufacture</h3>
-<form action="/Manufacturers/add" method="post">
+<form action="/manufacturers" method="post">
     <table border="5px">
         <tr>
             <td>
@@ -24,7 +24,7 @@
 </form>
 <br>
 <h2 th:text="'Manufacturer  list (count of manufacturers: ' + ${manufacturersSize} + ')'"></h2>
-<table border="1px">
+<table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
     <tr>
         <td>Id</td>
         <td>name</td>
@@ -33,7 +33,8 @@
     <tr th:each="manufacturer : ${manufacturerList}">
         <td><span th:text="${manufacturer.manufacturer_id}">ID</span></td>
         <td><span th:text="${manufacturer.manufacturer_name}">Name</span></td>
-        <td><a th:href="'/Manufacturers/delete/' + ${manufacturer.manufacturer_id}">Delete</a></td>
+        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.manufacturer_id}">Delete</a></td>
+<!--        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.manufacturer_id}">Delete</a></td>-->
     </tr>
 </table>
 

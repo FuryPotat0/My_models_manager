@@ -8,8 +8,14 @@
 </head>
 <body>
 <header th:insert="header :: header"></header>
+<h4>Find place</h4>
+<form method="get">
+    <input type="text" name="name" placeholder="input name">
+    <button type="submit" class="btn btn-info">search</button>
+</form>
 <h3>Add place</h3>
-<form action="/Places/add" method="post">
+<p th:text="${errorText}"></p>
+<form action="/places/add" method="post">
     <table border="5px">
         <tr>
             <td>
@@ -22,32 +28,34 @@
             </td>
             <td>
                 <select class="form-control" name="room">
-                    <option value="0">select team</option>
+                    <option value="0">select room</option>
                     <option th:each="room : ${roomList}" th:value="${room.id}" th:text="${room.name}"></option>
                 </select>
             </td>
             <td>
-                <input type="submit" value="add">
+                <button type="submit"  class="btn btn-success">add</button>
             </td>
         </tr>
     </table>
 </form>
 <br>
 <h2 th:text="'Places  list (count of places: ' + ${placeNumber} + ')'"></h2>
-<table border="1px">
+<table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
     <tr>
         <td>Id</td>
         <td>name</td>
         <td>description</td>
         <td>room name</td>
         <td>Delete from list</td>
+        <td>Edit</td>
     </tr>
     <tr th:each="place : ${placeList}">
         <td><span th:text="${place.id}">ID</span></td>
         <td><span th:text="${place.name}">Name</span></td>
         <td><span th:text="${place.description}">Description</span></td>
         <td><span th:text="${place.room.name}">Room</span></td>
-        <td><a th:href="'/Place/delete/' + ${place.id}">Delete</a></td>
+        <td><a th:href="'/places/delete/' + ${place.id}">Delete</a></td>
+        <td><a th:href="'/place/edit/' + ${place.id}">Edit</a></td>
     </tr>
 </table>
 </body>
