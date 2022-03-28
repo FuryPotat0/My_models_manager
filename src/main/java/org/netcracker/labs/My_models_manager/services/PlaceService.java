@@ -32,6 +32,7 @@ public class PlaceService {
 
     public List<Place> findAllByName(String name){
         List<Place> places = new ArrayList<>();
+        //places = (List<Place>) placeRepository.searchAllContainsByName(name);
         for (Place place: placeRepository.findAll()){
             if(place.getName().toLowerCase().contains(name.toLowerCase())){
                 places.add(place);

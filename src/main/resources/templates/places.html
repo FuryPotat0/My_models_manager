@@ -55,7 +55,7 @@
         <td><span th:text="${place.description}">Description</span></td>
         <td><span th:text="${place.room.name}">Room</span></td>
         <td><a th:href="'/places/delete/' + ${place.id}">Delete</a></td>
-        <td><a th:href="'/place/edit/' + ${place.id}">Edit</a></td>
+        <td><a th:href="'/places/' + ${place.id}">Edit</a></td>
     </tr>
 </table>
 </body>
