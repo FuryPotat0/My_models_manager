@@ -3,9 +3,9 @@ package org.netcracker.labs.My_models_manager.services;
 import org.netcracker.labs.My_models_manager.entities.Storage;
 import org.netcracker.labs.My_models_manager.repositories.StorageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +22,14 @@ public class StorageService {
         storageRepository.save(storage);
     }
 
-    public void delete(Long id){
-        storageRepository.deleteById(id);
+    public boolean delete(Long id){
+        try {
+            storageRepository.deleteById(id);
+            return true;
+        }
+        catch (DataIntegrityViolationException e){
+            return false;
+        }
     }
 
     public Optional<Storage> findById(Long id){
@@ -31,13 +37,7 @@ public class StorageService {
     }
 
     public List<Storage> findAllByName(String name){
-        List<Storage> storages = new ArrayList<>();
-        for (Storage storage: storageRepository.findAll()){
-            if(storage.getName().toLowerCase().contains(name.toLowerCase())){
-                storages.add(storage);
-            }
-        }
-        return storages;
+        return (List<Storage>) storageRepository.findByNameContaining(name);
     }
 }
 

@@ -3,10 +3,11 @@ package org.netcracker.labs.My_models_manager.services;
 import org.netcracker.labs.My_models_manager.entities.Model;
 import org.netcracker.labs.My_models_manager.repositories.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ModelService {
@@ -21,20 +22,22 @@ public class ModelService {
         modelRepository.save(model);
     }
 
-    public void delete(Long id){
-        modelRepository.deleteById(id);
+    public boolean delete(Long id){
+        try {
+            modelRepository.deleteById(id);
+            return true;
+        }
+        catch (DataIntegrityViolationException e){
+            return false;
+        }
     }
 
     public List<Model> findAllByName(String name){
-        List<Model> models = new ArrayList<>();
-        for (Model model: modelRepository.findAll()){
-            if(model.getName().toLowerCase().contains(name.toLowerCase())){
-                models.add(model);
-                System.out.println(model.getName());
-                System.out.println(name);
-            }
-        }
-        return models;
+        return (List<Model>) modelRepository.findByNameContaining(name);
+    }
+
+    public Optional<Model> findById(Long id){
+        return modelRepository.findById(id);
     }
 }
 

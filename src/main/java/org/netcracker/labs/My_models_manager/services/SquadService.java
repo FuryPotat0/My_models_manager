@@ -3,9 +3,9 @@ package org.netcracker.labs.My_models_manager.services;
 import org.netcracker.labs.My_models_manager.entities.Squad;
 import org.netcracker.labs.My_models_manager.repositories.SquadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +22,14 @@ public class SquadService {
         squadRepository.save(squad);
     }
 
-    public void delete(Long id){
-        squadRepository.deleteById(id);
+    public boolean delete(Long id){
+        try {
+            squadRepository.deleteById(id);
+            return true;
+        }
+        catch (DataIntegrityViolationException e){
+            return false;
+        }
     }
 
     public Optional<Squad> findById(Long id){
@@ -31,13 +37,7 @@ public class SquadService {
     }
 
     public List<Squad> findAllByName(String name){
-        List<Squad> squads = new ArrayList<>();
-        for (Squad squad: squadRepository.findAll()){
-            if(squad.getName().toLowerCase().contains(name.toLowerCase())){
-                squads.add(squad);
-            }
-        }
-        return squads;
+        return (List<Squad>) squadRepository.findByNameContaining(name);
     }
 }
 

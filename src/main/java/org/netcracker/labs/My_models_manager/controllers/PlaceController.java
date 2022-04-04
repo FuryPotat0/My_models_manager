@@ -18,12 +18,13 @@ import java.util.Optional;
 
 @Controller
 public class PlaceController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceController.class);
     @Autowired
     private PlaceService placeService;
     @Autowired
     private RoomService roomService;
+
     private String errorText = "";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceController.class);
 
     @GetMapping("/places")
     public String getAll(@RequestParam(value = "name", required = false) String name, Model model) {
@@ -33,23 +34,21 @@ public class PlaceController {
         if (name != null) {
             places = placeService.findAllByName(name);
             LOGGER.info("search answers by name={}", name);
-        } else {
-            places = placeService.getAll();
-        }
+        } else places = placeService.getAll();
         rooms = roomService.getAll();
         model.addAttribute("placeNumber", places.size());
         model.addAttribute("placeList", places);
         model.addAttribute("roomList", rooms);
         model.addAttribute("errorText", errorText);
         errorText = "";
-        return "places";
+        return "Place/places";
     }
 
-    @RequestMapping("places/delete/{id}")
+    @RequestMapping("/places/delete/{id}")
     public String deletePlace(@PathVariable Long id) {
         if (placeService.findById(id).isPresent()) {
             placeService.delete(id);
-            LOGGER.info("Place {} with id={} was deleted", placeService.findById(id).get().getName(), id);
+            LOGGER.info("Place \"{}\" with id={} was deleted", placeService.findById(id).get().getName(), id);
         } else {
             LOGGER.warn("Place with id={} don't exist", id);
         }
@@ -59,9 +58,9 @@ public class PlaceController {
     @PostMapping("/places/add")
     public String addPlace(@ModelAttribute Place place) {
         if (place.getRoom() != null)
-            if (!Objects.equals(place.getName(), "")) {
+            if (!place.getName().isEmpty()) {
                 placeService.save(place);
-                LOGGER.info("Place {} with id={} was added", place.getName(), place.getId());
+                LOGGER.info("Place \"{}\" with id={} was added", place.getName(), place.getId());
                 return "redirect:/places";
             } else LOGGER.warn("Place wasn't added, name is empty");
         else LOGGER.warn("Place wasn't added, room is null");
@@ -79,8 +78,8 @@ public class PlaceController {
             List<Room> rooms = roomService.getAll();
             model.addAttribute("place", res);
             model.addAttribute("roomList", rooms);
-            LOGGER.info("Place {} with id={} will be edited", place.get().getName(), id);
-            return "place-edit";
+            LOGGER.info("Place \"{}\" with id={} will be edited", place.get().getName(), id);
+            return "Place/place-edit";
         } else {
             LOGGER.warn("No Place with id={}", id);
             return "redirect:/places";

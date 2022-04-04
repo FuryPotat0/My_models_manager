@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Manufacturer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true)
     private String name;

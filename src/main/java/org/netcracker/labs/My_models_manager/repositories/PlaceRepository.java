@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Collection;
 
 public interface PlaceRepository extends CrudRepository<Place, Long> {
-    public Collection<Place> searchAllContainsByName(String name);
+    Collection<Place> findByNameContaining(String name);
 }

@@ -3,10 +3,11 @@ package org.netcracker.labs.My_models_manager.services;
 import org.netcracker.labs.My_models_manager.entities.Place;
 import org.netcracker.labs.My_models_manager.repositories.PlaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,8 +23,14 @@ public class PlaceService {
         placeRepository.save(place);
     }
 
-    public void delete(Long id){
-        placeRepository.deleteById(id);
+    public boolean delete(Long id){
+        try {
+            placeRepository.deleteById(id);
+            return true;
+        }
+        catch (DataIntegrityViolationException e){
+            return false;
+        }
     }
 
     public Optional<Place> findById(Long id){
@@ -31,13 +38,16 @@ public class PlaceService {
     }
 
     public List<Place> findAllByName(String name){
-        List<Place> places = new ArrayList<>();
-        //places = (List<Place>) placeRepository.searchAllContainsByName(name);
+        return (List<Place>) placeRepository.findByNameContaining(name);
+    }
+
+    public int countByRoomId(Long id){
+        int count = 0;
         for (Place place: placeRepository.findAll()){
-            if(place.getName().toLowerCase().contains(name.toLowerCase())){
-                places.add(place);
+            if(Objects.equals(place.getRoom().getId(), id)){
+                count++;
             }
         }
-        return places;
+        return count;
     }
 }

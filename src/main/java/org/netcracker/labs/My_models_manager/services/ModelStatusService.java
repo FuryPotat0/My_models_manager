@@ -3,10 +3,11 @@ package org.netcracker.labs.My_models_manager.services;
 import org.netcracker.labs.My_models_manager.entities.ModelStatus;
 import org.netcracker.labs.My_models_manager.repositories.ModelStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ModelStatusService {
@@ -21,18 +22,22 @@ public class ModelStatusService {
         return modelStatusRepository.save(modelStatus);
     }
 
-    public void delete(Long id){
-        modelStatusRepository.deleteById(id);
+    public boolean delete(Long id){
+        try {
+            modelStatusRepository.deleteById(id);
+            return true;
+        }
+        catch (DataIntegrityViolationException e){
+            return false;
+        }
     }
 
     public List<ModelStatus> findAllByName(String name){
-        List<ModelStatus> modelStatuses = new ArrayList<>();
-        for (ModelStatus modelStatus: modelStatusRepository.findAll()){
-            if(modelStatus.getName().toLowerCase().contains(name.toLowerCase())){
-                modelStatuses.add(modelStatus);
-            }
-        }
-        return modelStatuses;
+        return (List<ModelStatus>) modelStatusRepository.findByNameContaining(name);
+    }
+
+    public Optional<ModelStatus> findById(Long id){
+        return modelStatusRepository.findById(id);
     }
 }
 

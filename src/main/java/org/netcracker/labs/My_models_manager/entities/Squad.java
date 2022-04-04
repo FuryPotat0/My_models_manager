@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Squad {
+public class Squad { // TODO make squad and model abstract or extends
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

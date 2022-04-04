@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Storages</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+<header th:insert="header :: header"></header>
+<h4>Find storage</h4>
+<form method="get">
+    <input type="text" name="name" placeholder="input name">
+    <button type="submit" class="btn btn-info">search</button>
+</form>
+<h3>Add storage</h3>
+<p th:text="${errorText}"></p>
+<form action="/storages/add" method="post">
+    <table border="5px">
+        <tr>
+            <td>
+                <label>Storages name</label>
+                <input type="text" name="name">
+            </td>
+            <td>
+                <label>Storages description</label>
+                <input type="text" name="description">
+            </td>
+            <td>
+                <select class="form-control" name="place">
+                    <option value="0">select place</option>
+                    <option th:each="place : ${places}" th:value="${place.id}" th:text="${place.name}"></option>
+                </select>
+            </td>
+            <td>
+                <button type="submit"  class="btn btn-success">add</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<br>
+<h2 th:text="'Storages  list (count of storages: ' + ${storageNumber} + ')'"></h2>
+<table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
+    <tr>
+        <td>Id</td>
+        <td>name</td>
+        <td>description</td>
+        <td>place name</td>
+        <td>Delete from list</td>
+        <td>Edit</td>
+    </tr>
+    <tr th:each="storage : ${storages}">
+        <td><span th:text="${storage.id}">ID</span></td>
+        <td><span th:text="${storage.name}">Name</span></td>
+        <td><span th:text="${storage.description}">Description</span></td>
+        <td><span th:text="${storage.place.name}">Place</span></td>
+        <td><a th:href="'/storages/delete/' + ${storage.id}">Delete</a></td>
+        <td><a th:href="'/storages/' + ${storage.id}">Edit</a></td>
+    </tr>
+</table>
+</body>
+</html>

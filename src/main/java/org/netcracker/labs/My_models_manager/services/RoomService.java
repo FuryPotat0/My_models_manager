@@ -3,9 +3,9 @@ package org.netcracker.labs.My_models_manager.services;
 import org.netcracker.labs.My_models_manager.entities.Room;
 import org.netcracker.labs.My_models_manager.repositories.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +22,14 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-    public void delete(Long id){
-        roomRepository.deleteById(id);
+    public boolean delete(Long id){
+        try {
+            roomRepository.deleteById(id);
+            return true;
+        }
+        catch (DataIntegrityViolationException e){ // TODO move to controller
+            return false;
+        }
     }
 
     public boolean isExist(Long id){
@@ -35,12 +41,6 @@ public class RoomService {
     }
 
     public List<Room> findAllByName(String name){
-        List<Room> rooms = new ArrayList<>();
-        for (Room room: roomRepository.findAll()){
-            if(room.getName().toLowerCase().contains(name.toLowerCase())){
-                rooms.add(room);
-            }
-        }
-        return rooms;
+        return (List<Room>) roomRepository.findByNameContaining(name);
     }
 }
