@@ -19,6 +19,9 @@ public class Model {
     private String name;
 
     @Column
+    private int modelsInSquad;
+
+    @Column
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -30,4 +33,3 @@ public class Model {
     @OneToOne(fetch = FetchType.LAZY)
     private Storage storage;
 }
-

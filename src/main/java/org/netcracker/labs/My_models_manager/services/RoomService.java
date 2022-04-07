@@ -14,33 +14,27 @@ public class RoomService {
     @Autowired
     private RoomRepository roomRepository;
 
-    public List<Room> getAll(){
+    public List<Room> getAll() {
         return (List<Room>) roomRepository.findAll();
     }
 
-    public void save(Room room){
+    public void save(Room room) {
         roomRepository.save(room);
     }
 
-    public boolean delete(Long id){
-        try {
-            roomRepository.deleteById(id);
-            return true;
-        }
-        catch (DataIntegrityViolationException e){ // TODO move to controller
-            return false;
-        }
+    public void delete(Long id) throws DataIntegrityViolationException {
+        roomRepository.deleteById(id);
     }
 
-    public boolean isExist(Long id){
+    public boolean isExist(Long id) {
         return roomRepository.findById(id).isPresent();
     }
 
-    public Optional<Room> findById(Long id){
+    public Optional<Room> findById(Long id) {
         return roomRepository.findById(id);
     }
 
-    public List<Room> findAllByName(String name){
+    public List<Room> findAllByName(String name) {
         return (List<Room>) roomRepository.findByNameContaining(name);
     }
 }

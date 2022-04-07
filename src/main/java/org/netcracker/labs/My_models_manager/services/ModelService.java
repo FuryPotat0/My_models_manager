@@ -14,29 +14,23 @@ public class ModelService {
     @Autowired
     private ModelRepository modelRepository;
 
-    public List<Model> getAll(){
+    public List<Model> getAll() {
         return (List<Model>) modelRepository.findAll();
     }
 
-    public void save(Model model){
+    public void save(Model model) {
         modelRepository.save(model);
     }
 
-    public boolean delete(Long id){
-        try {
-            modelRepository.deleteById(id);
-            return true;
-        }
-        catch (DataIntegrityViolationException e){
-            return false;
-        }
+    public void delete(Long id) throws DataIntegrityViolationException {
+        modelRepository.deleteById(id);
     }
 
-    public List<Model> findAllByName(String name){
+    public List<Model> findAllByName(String name) {
         return (List<Model>) modelRepository.findByNameContaining(name);
     }
 
-    public Optional<Model> findById(Long id){
+    public Optional<Model> findById(Long id) {
         return modelRepository.findById(id);
     }
 }

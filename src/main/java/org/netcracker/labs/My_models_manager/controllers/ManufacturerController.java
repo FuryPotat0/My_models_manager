@@ -5,17 +5,17 @@ import org.apache.logging.log4j.Logger;
 import org.netcracker.labs.My_models_manager.entities.Manufacturer;
 import org.netcracker.labs.My_models_manager.services.ManufacturerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-public class ManufacturerController {
+public class ManufacturerController implements ControllerInterface<Manufacturer> {
     @Autowired
     private ManufacturerService manufacturerService;
     private static final Logger LOGGER = LogManager.getLogger(ManufacturerController.class);
@@ -38,24 +38,23 @@ public class ManufacturerController {
     }
 
     @RequestMapping("/manufacturers/delete/{id}")
-    public String deleteManufacturer(@PathVariable Long id){
+    public String deleteEntity(@PathVariable Long id){
         if (manufacturerService.findById(id).isPresent()){
-            if (manufacturerService.delete(id)){
+            try {
+                manufacturerService.delete(id);
                 LOGGER.info("Manufacturer with id={} was deleted", id);
             }
-            else {
+            catch (DataIntegrityViolationException e) {
                 LOGGER.info("Manufacturer {} with id={} wasn't deleted",
                         manufacturerService.findById(id).get().getName(), id);
-                errorText = "Can't delete this model status";
+                errorText = "Can't delete this manufacturer, remove all links to this manufacturer to delete it";
             }
-            LOGGER.info("Manufacturer {} with id={} was deleted",
-                    manufacturerService.findById(id).get().getName(), id);
         } else LOGGER.warn("Manufacturer with id={} don't exist", id);
         return "redirect:/manufacturers";
     }
 
     @PostMapping("/manufacturers/add")
-    public String addManufacturer(@ModelAttribute Manufacturer manufacturer){
+    public String addEntity(@ModelAttribute Manufacturer manufacturer){
         if (!manufacturer.getName().isEmpty()){
             manufacturerService.save(manufacturer);
             LOGGER.info("Manufacturer {} with id={} was added", manufacturer.getName(), manufacturer.getId());
@@ -68,9 +67,9 @@ public class ManufacturerController {
     }
 
     @GetMapping("/manufacturers/{id}")
-    public String manufacturerEdit(@PathVariable(value = "id") Long id, Model model) {
+    public String editEntity(@PathVariable(value = "id") Long id, Model model) {
         Optional<Manufacturer> manufacturer = manufacturerService.findById(id);
-        LOGGER.info("User want edit Manufacturer with id={}", id);
+        LOGGER.info("User want visit Manufacturer with id={}", id);
         if (manufacturer.isPresent()) {
             ArrayList<Manufacturer> res = new ArrayList<>();
             res.add(manufacturer.get());
@@ -84,21 +83,18 @@ public class ManufacturerController {
     }
 
     @PostMapping("/manufacturers/{id}")
-    public String manufacturerUpdate(@PathVariable(value = "id") Long id, @RequestParam String name) {
+    public String updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute Manufacturer manufacturer) {
         LOGGER.info("User want edit Manufacturer with id={}", id);
 
         if (manufacturerService.findById(id).isEmpty())
             LOGGER.warn("Manufacturer with id={} don't exist", id);
-        else if (Objects.equals(name, ""))
-            LOGGER.warn("Manufacturer name is empty");
         else {
-            Manufacturer manufacturer = manufacturerService.findById(id).get();
-            manufacturer.setName(name);
-            manufacturerService.save(manufacturer);
-            LOGGER.info("Manufacturer {} with id={} was edited successfully", name, id);
-            return "redirect:/manufacturers";
+            if (!manufacturer.getName().isEmpty()){
+                manufacturerService.save(manufacturer);
+                LOGGER.info("Manufacturer {} with id={} was edited successfully", manufacturer.getName(), id);
+            }
+            else  errorText = "Wrong input data";
         }
-        errorText = "Wrong input data";
         return "redirect:/manufacturers";
     }
 }

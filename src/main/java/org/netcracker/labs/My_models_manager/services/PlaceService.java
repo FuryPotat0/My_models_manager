@@ -15,36 +15,30 @@ public class PlaceService {
     @Autowired
     private PlaceRepository placeRepository;
 
-    public List<Place> getAll(){
+    public List<Place> getAll() {
         return (List<Place>) placeRepository.findAll();
     }
 
-    public void save(Place place){
+    public void save(Place place) {
         placeRepository.save(place);
     }
 
-    public boolean delete(Long id){
-        try {
-            placeRepository.deleteById(id);
-            return true;
-        }
-        catch (DataIntegrityViolationException e){
-            return false;
-        }
+    public void delete(Long id) throws DataIntegrityViolationException {
+        placeRepository.deleteById(id);
     }
 
-    public Optional<Place> findById(Long id){
+    public Optional<Place> findById(Long id) {
         return placeRepository.findById(id);
     }
 
-    public List<Place> findAllByName(String name){
+    public List<Place> findAllByName(String name) {
         return (List<Place>) placeRepository.findByNameContaining(name);
     }
 
-    public int countByRoomId(Long id){
+    public int countByRoomId(Long id) {
         int count = 0;
-        for (Place place: placeRepository.findAll()){
-            if(Objects.equals(place.getRoom().getId(), id)){
+        for (Place place : placeRepository.findAll()) {
+            if (Objects.equals(place.getRoom().getId(), id)) {
                 count++;
             }
         }

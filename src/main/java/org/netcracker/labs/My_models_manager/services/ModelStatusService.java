@@ -14,29 +14,23 @@ public class ModelStatusService {
     @Autowired
     ModelStatusRepository modelStatusRepository;
 
-    public List<ModelStatus> getAll(){
+    public List<ModelStatus> getAll() {
         return (List<ModelStatus>) modelStatusRepository.findAll();
     }
 
-    public ModelStatus save(ModelStatus modelStatus){
+    public ModelStatus save(ModelStatus modelStatus) {
         return modelStatusRepository.save(modelStatus);
     }
 
-    public boolean delete(Long id){
-        try {
-            modelStatusRepository.deleteById(id);
-            return true;
-        }
-        catch (DataIntegrityViolationException e){
-            return false;
-        }
+    public void delete(Long id) throws DataIntegrityViolationException {
+        modelStatusRepository.deleteById(id);
     }
 
-    public List<ModelStatus> findAllByName(String name){
+    public List<ModelStatus> findAllByName(String name) {
         return (List<ModelStatus>) modelStatusRepository.findByNameContaining(name);
     }
 
-    public Optional<ModelStatus> findById(Long id){
+    public Optional<ModelStatus> findById(Long id) {
         return modelStatusRepository.findById(id);
     }
 }

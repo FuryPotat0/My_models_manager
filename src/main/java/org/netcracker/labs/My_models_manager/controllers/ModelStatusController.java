@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.netcracker.labs.My_models_manager.entities.ModelStatus;
 import org.netcracker.labs.My_models_manager.services.ModelStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +41,14 @@ public class ModelStatusController {
     @RequestMapping("/modelStatuses/delete/{id}")
     public String deleteModelStatus(@PathVariable Long id){
         if (modelStatusService.findById(id).isPresent()){
-            if (modelStatusService.delete(id)){
+            try {
+                modelStatusService.delete(id);
                 LOGGER.info("ModelStatus with id={} was deleted", id);
             }
-            else {
+            catch (DataIntegrityViolationException e) {
                 LOGGER.info("ModelStatus {} with id={} wasn't deleted",
                         modelStatusService.findById(id).get().getName(), id);
-                errorText = "Can't delete this model status";
+                errorText = "Can't delete this ModelStatus, remove all links to this ModelStatus to delete it";
             }
         } else LOGGER.warn("ModelStatus with id={} don't exist", id);
         return "redirect:/modelStatuses";

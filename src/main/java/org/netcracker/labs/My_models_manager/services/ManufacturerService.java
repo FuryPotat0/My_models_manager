@@ -14,29 +14,23 @@ public class ManufacturerService {
     @Autowired
     private ManufacturerRepository manufacturerRepository;
 
-    public List<Manufacturer> getAll(){
+    public List<Manufacturer> getAll() {
         return (List<Manufacturer>) manufacturerRepository.findAll();
     }
 
-    public void save(Manufacturer manufacturer){
+    public void save(Manufacturer manufacturer) {
         manufacturerRepository.save(manufacturer);
     }
 
-    public boolean delete(Long id){
-        try {
-            manufacturerRepository.deleteById(id);
-            return true;
-        }
-        catch (DataIntegrityViolationException e){
-            return false;
-        }
+    public void delete(Long id) throws DataIntegrityViolationException {
+        manufacturerRepository.deleteById(id);
     }
 
-    public List<Manufacturer> findAllByName(String name){
+    public List<Manufacturer> findAllByName(String name) {
         return (List<Manufacturer>) manufacturerRepository.findByNameContaining(name);
     }
 
-    public Optional<Manufacturer> findById(Long id){
+    public Optional<Manufacturer> findById(Long id) {
         return manufacturerRepository.findById(id);
     }
 }

@@ -10,6 +10,7 @@ import org.netcracker.labs.My_models_manager.services.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,13 +44,16 @@ public class ModelController {
         List<Storage> storages;
         List<Manufacturer> manufacturers;
         List<ModelStatus> modelStatuses;
+
         if (name != null){
             models = modelService.findAllByName(name);
             LOGGER.info("search answers by name={}", name);
         } else models = modelService.getAll();
+
         storages = storageService.getAll();
         manufacturers = manufacturerService.getAll();
         modelStatuses = modelStatusService.getAll();
+
         model.addAttribute("modelNumber", models.size());
         model.addAttribute("models", models);
         model.addAttribute("storages", storages);
@@ -63,11 +67,16 @@ public class ModelController {
     @RequestMapping("/models/delete/{id}")
     public String deleteModel(@PathVariable Long id) {
         if (modelService.findById(id).isPresent()) {
-            modelService.delete(id);
-            LOGGER.info("Model \"{}\" with id={} was deleted", modelService.findById(id).get().getName(), id);
-        } else {
-            LOGGER.warn("Model with id={} don't exist", id);
-        }
+            try {
+                modelService.delete(id);
+                LOGGER.info("Model with id={} was deleted", id);
+            }
+            catch (DataIntegrityViolationException e) {
+                LOGGER.info("Model {} with id={} wasn't deleted",
+                        modelService.findById(id).get().getName(), id);
+                errorText = "Can't delete this model, remove all links to this model to delete it";
+            }
+        } else LOGGER.warn("Model with id={} don't exist", id);
         return "redirect:/models";
     }
 
@@ -108,12 +117,13 @@ public class ModelController {
 
     @PostMapping("/models/{id}")
     public String modelUpdate(@PathVariable(value = "id") Long id, @RequestParam String name,
-                              @RequestParam String description, @RequestParam String manufacturer,
+                              @RequestParam String description, @RequestParam String modelsInSquad, @RequestParam String manufacturer,
                               @RequestParam String modelStatus, @RequestParam String storage) {
         LOGGER.info("User want edit Model with id={}", id);
         Long manufacturerId = Long.parseLong(manufacturer);
         Long modelStatusId = Long.parseLong(modelStatus);
         Long storageId = Long.parseLong(storage);
+
 
         if (modelService.findById(id).isEmpty())
             LOGGER.warn("Model with id={} don't exist", id);
@@ -124,6 +134,11 @@ public class ModelController {
             LOGGER.warn("Model name is empty");
         else {
             org.netcracker.labs.My_models_manager.entities.Model model = modelService.findById(id).get();
+            try{
+                model.setModelsInSquad(Integer.parseInt(modelsInSquad));
+            } catch (NumberFormatException e){
+                model.setModelsInSquad(1);
+            }
             model.setName(name);
             model.setDescription(description);
             model.setModelStatus(modelStatusService.findById(modelStatusId).get());

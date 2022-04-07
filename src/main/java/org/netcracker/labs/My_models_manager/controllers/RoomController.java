@@ -5,6 +5,7 @@ import org.netcracker.labs.My_models_manager.services.RoomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,11 +42,13 @@ public class RoomController {
     @RequestMapping("/rooms/delete/{id}")
     public String deleteRoom(@PathVariable Long id){
         if (roomService.findById(id).isPresent()) {
-            if (roomService.delete(id))
-                LOGGER.info("Place {} with id={} was deleted", roomService.findById(id).get().getName(), id);
-            else {
-                errorText = "Room connected to places and can't be deleted";
-                LOGGER.warn("Room {} with id={} connected to places", roomService.findById(id).get().getName(), id);
+            try {
+                roomService.delete(id);
+                LOGGER.info("Room with id={} was deleted", id);
+            }
+            catch (DataIntegrityViolationException e) {
+                LOGGER.warn("Room {} with id={} wasn't deleted", roomService.findById(id).get().getName(), id);
+                errorText = "Can't delete this room, remove all links to this room to delete it";
             }
         }
         else LOGGER.warn("Room with id={} don't exist", id);

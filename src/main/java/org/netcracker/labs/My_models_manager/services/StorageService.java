@@ -14,29 +14,23 @@ public class StorageService {
     @Autowired
     private StorageRepository storageRepository;
 
-    public List<Storage> getAll(){
+    public List<Storage> getAll() {
         return (List<Storage>) storageRepository.findAll();
     }
 
-    public void save(Storage storage){
+    public void save(Storage storage) {
         storageRepository.save(storage);
     }
 
-    public boolean delete(Long id){
-        try {
-            storageRepository.deleteById(id);
-            return true;
-        }
-        catch (DataIntegrityViolationException e){
-            return false;
-        }
+    public void delete(Long id) throws DataIntegrityViolationException {
+        storageRepository.deleteById(id);
     }
 
-    public Optional<Storage> findById(Long id){
+    public Optional<Storage> findById(Long id) {
         return storageRepository.findById(id);
     }
 
-    public List<Storage> findAllByName(String name){
+    public List<Storage> findAllByName(String name) {
         return (List<Storage>) storageRepository.findByNameContaining(name);
     }
 }

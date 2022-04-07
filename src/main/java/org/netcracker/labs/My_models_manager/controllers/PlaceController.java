@@ -7,6 +7,7 @@ import org.netcracker.labs.My_models_manager.services.RoomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -47,8 +48,14 @@ public class PlaceController {
     @RequestMapping("/places/delete/{id}")
     public String deletePlace(@PathVariable Long id) {
         if (placeService.findById(id).isPresent()) {
-            placeService.delete(id);
-            LOGGER.info("Place \"{}\" with id={} was deleted", placeService.findById(id).get().getName(), id);
+            try {
+                placeService.delete(id);
+                LOGGER.info("Place with id={} was deleted", id);
+            } catch (DataIntegrityViolationException e){
+                LOGGER.info("Place {} with id={} wasn't deleted",
+                        placeService.findById(id).get().getName(), id);
+                errorText = "Can't delete this place, remove all links to this place to delete it";
+            }
         } else {
             LOGGER.warn("Place with id={} don't exist", id);
         }

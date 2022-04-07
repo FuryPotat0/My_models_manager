@@ -16,7 +16,7 @@
 <h3>Add model</h3>
 <p th:text="${errorText}"></p>
 <form action="/models/add" method="post">
-    <table border="5px">
+    <table border="3px">
         <tr>
             <td>
                 <label>Model name</label>
@@ -25,6 +25,10 @@
             <td>
                 <label>Model description</label>
                 <input type="text" name="description">
+            </td>
+            <td>
+                <label>Models number</label>
+                <input type="text" name="modelsInSquad" placeholder="input models number">
             </td>
             <td>
                 <select class="form-control" name="manufacturer">
@@ -57,6 +61,7 @@
         <td>Id</td>
         <td>name</td>
         <td>description</td>
+        <td>models number</td>
         <td>manufacturer name</td>
         <td>model status name</td>
         <td>storage name</td>
@@ -67,6 +72,7 @@
         <td><span th:text="${model.id}">ID</span></td>
         <td><span th:text="${model.name}">Name</span></td>
         <td><span th:text="${model.description}">Description</span></td>
+        <td><span th:text="${model.modelsInSquad}">Models number</span></td>
         <td><span th:text="${model.manufacturer.name}">Manufacturer</span></td>
         <td><span th:text="${model.modelStatus.name}">Model status</span></td>
         <td><span th:text="${model.storage.name}">Storage</span></td>

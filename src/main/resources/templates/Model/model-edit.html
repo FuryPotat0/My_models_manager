@@ -22,6 +22,10 @@
                     <input type="text" th:value="${el.description}" name="description">
                 </td>
                 <td>
+                    <label>Models number</label>
+                    <input type="text" th:value="${el.modelsInSquad}" name="modelsInSquad">
+                </td>
+                <td>
                     <select class="form-control" name="manufacturer">
                         <option th:value="${el.manufacturer.id}" th:text="${el.manufacturer.name} "></option>
                         <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.id}" th:text="${manufacturer.name}"></option>
