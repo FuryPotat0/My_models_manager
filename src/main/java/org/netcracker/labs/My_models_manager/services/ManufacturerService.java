@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ManufacturerService {
+public class ManufacturerService implements ServiceInterface<Manufacturer> {
     @Autowired
     private ManufacturerRepository manufacturerRepository;
 
@@ -18,8 +18,8 @@ public class ManufacturerService {
         return (List<Manufacturer>) manufacturerRepository.findAll();
     }
 
-    public void save(Manufacturer manufacturer) {
-        manufacturerRepository.save(manufacturer);
+    public void save(Manufacturer entity) {
+        manufacturerRepository.save(entity);
     }
 
     public void delete(Long id) throws DataIntegrityViolationException {

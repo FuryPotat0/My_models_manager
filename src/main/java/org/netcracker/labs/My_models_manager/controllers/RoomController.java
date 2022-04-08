@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class RoomController {
+public class RoomController implements ControllerInterface<Room> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomController.class);
     private String errorText = "";
 
@@ -40,7 +40,7 @@ public class RoomController {
     }
 
     @RequestMapping("/rooms/delete/{id}")
-    public String deleteRoom(@PathVariable Long id){
+    public String deleteEntity(@PathVariable Long id){
         if (roomService.findById(id).isPresent()) {
             try {
                 roomService.delete(id);
@@ -56,7 +56,7 @@ public class RoomController {
     }
 
     @PostMapping("/rooms/add")
-    public String addRoom(@ModelAttribute Room room){
+    public String addEntity(@ModelAttribute Room room){
         roomService.save(room);
         if (!room.getName().isEmpty()){
             roomService.save(room);
@@ -69,9 +69,9 @@ public class RoomController {
     }
 
     @GetMapping("/rooms/{id}")
-    public String roomEdit(@PathVariable(value = "id") Long id, Model model) {
+    public String editEntity(@PathVariable(value = "id") Long id, Model model) {
         Optional<Room> room = roomService.findById(id);
-        LOGGER.info("User want edit Room with id={}", id);
+        LOGGER.info("User want visit Room with id={}", id);
         if (room.isPresent()) {
             ArrayList<Room> res = new ArrayList<>();
             res.add(room.get());
@@ -85,20 +85,16 @@ public class RoomController {
     }
 
     @PostMapping("/rooms/{id}")
-    public String roomUpdate(@PathVariable(value = "id") Long id, @RequestParam String name) {
+    public String updateEntity(@PathVariable(value = "id") Long id,  @ModelAttribute Room room) {
         LOGGER.info("User want edit Room with id={}", id);
         if (roomService.findById(id).isEmpty())
             LOGGER.warn("Room with id={} don't exist", id);
-        else if (name.isEmpty())
-            LOGGER.warn("Room name is empty");
-        else {
-            Room room = roomService.findById(id).get();
-            room.setName(name);
-            roomService.save(room);
-            LOGGER.info("Room {} with id={} was edited successfully", name, id);
-            return "redirect:/rooms";
-        }
-        errorText = "Wrong input data";
+        else
+            if (!room.getName().isEmpty()){
+                roomService.save(room);
+                LOGGER.info("Room {} with id={} was edited successfully", room.getName(), id);
+            }
+            else errorText = "Wrong input data";
         return "redirect:/rooms";
     }
 }

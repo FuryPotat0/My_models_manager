@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StorageService {
+public class StorageService implements ServiceInterface<Storage> {
     @Autowired
     private StorageRepository storageRepository;
 
@@ -18,20 +18,20 @@ public class StorageService {
         return (List<Storage>) storageRepository.findAll();
     }
 
-    public void save(Storage storage) {
-        storageRepository.save(storage);
+    public void save(Storage entity) {
+        storageRepository.save(entity);
     }
 
     public void delete(Long id) throws DataIntegrityViolationException {
         storageRepository.deleteById(id);
     }
 
-    public Optional<Storage> findById(Long id) {
-        return storageRepository.findById(id);
-    }
-
     public List<Storage> findAllByName(String name) {
         return (List<Storage>) storageRepository.findByNameContaining(name);
+    }
+
+    public Optional<Storage> findById(Long id) {
+        return storageRepository.findById(id);
     }
 }
 

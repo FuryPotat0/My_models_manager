@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RoomService {
+public class RoomService implements ServiceInterface<Room>{
     @Autowired
     private RoomRepository roomRepository;
 
@@ -18,23 +18,19 @@ public class RoomService {
         return (List<Room>) roomRepository.findAll();
     }
 
-    public void save(Room room) {
-        roomRepository.save(room);
+    public void save(Room entity) {
+        roomRepository.save(entity);
     }
 
     public void delete(Long id) throws DataIntegrityViolationException {
         roomRepository.deleteById(id);
     }
 
-    public boolean isExist(Long id) {
-        return roomRepository.findById(id).isPresent();
+    public List<Room> findAllByName(String name) {
+        return (List<Room>) roomRepository.findByNameContaining(name);
     }
 
     public Optional<Room> findById(Long id) {
         return roomRepository.findById(id);
-    }
-
-    public List<Room> findAllByName(String name) {
-        return (List<Room>) roomRepository.findByNameContaining(name);
     }
 }

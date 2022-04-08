@@ -88,13 +88,12 @@ public class ManufacturerController implements ControllerInterface<Manufacturer>
 
         if (manufacturerService.findById(id).isEmpty())
             LOGGER.warn("Manufacturer with id={} don't exist", id);
-        else {
+        else
             if (!manufacturer.getName().isEmpty()){
                 manufacturerService.save(manufacturer);
                 LOGGER.info("Manufacturer {} with id={} was edited successfully", manufacturer.getName(), id);
             }
-            else  errorText = "Wrong input data";
-        }
+            else errorText = "Wrong input data";
         return "redirect:/manufacturers";
     }
 }

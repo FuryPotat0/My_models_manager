@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-public class ModelController {
+public class ModelController implements ControllerInterface<org.netcracker.labs.My_models_manager.entities.Model> {
     @Autowired
     private ModelService modelService;
 
@@ -38,7 +37,7 @@ public class ModelController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelController.class);
 
     @GetMapping("/models")
-    public String models(@RequestParam(value = "name", required = false) String name, Model model){
+    public String getAll(@RequestParam(value = "name", required = false) String name, Model model){
         LOGGER.info("User go on ModelController page");
         List<org.netcracker.labs.My_models_manager.entities.Model> models;
         List<Storage> storages;
@@ -65,7 +64,7 @@ public class ModelController {
     }
 
     @RequestMapping("/models/delete/{id}")
-    public String deleteModel(@PathVariable Long id) {
+    public String deleteEntity(@PathVariable Long id) {
         if (modelService.findById(id).isPresent()) {
             try {
                 modelService.delete(id);
@@ -81,7 +80,7 @@ public class ModelController {
     }
 
     @PostMapping("/models/add")
-    public String addModel(@ModelAttribute org.netcracker.labs.My_models_manager.entities.Model model) {
+    public String addEntity(@ModelAttribute org.netcracker.labs.My_models_manager.entities.Model model) {
         if (model.getModelStatus() != null && model.getManufacturer() != null && model.getStorage() != null)
             if (model.getName() != null) {
                 modelService.save(model);
@@ -94,9 +93,9 @@ public class ModelController {
     }
 
     @GetMapping("/models/{id}")
-    public String modelEdit(@PathVariable(value = "id") Long id, Model model) {
+    public String editEntity(@PathVariable(value = "id") Long id, Model model) {
         Optional<org.netcracker.labs.My_models_manager.entities.Model> modelOptional = modelService.findById(id);
-        LOGGER.info("User want edit Model with id={}", id);
+        LOGGER.info("User want visit Model with id={}", id);
         if (modelOptional.isPresent()) {
             ArrayList<org.netcracker.labs.My_models_manager.entities.Model> res = new ArrayList<>();
             res.add(modelOptional.get());
@@ -116,39 +115,18 @@ public class ModelController {
     }
 
     @PostMapping("/models/{id}")
-    public String modelUpdate(@PathVariable(value = "id") Long id, @RequestParam String name,
-                              @RequestParam String description, @RequestParam String modelsInSquad, @RequestParam String manufacturer,
-                              @RequestParam String modelStatus, @RequestParam String storage) {
+    public String updateEntity(@PathVariable(value = "id") Long id,
+                               @ModelAttribute org.netcracker.labs.My_models_manager.entities.Model model) {
         LOGGER.info("User want edit Model with id={}", id);
-        Long manufacturerId = Long.parseLong(manufacturer);
-        Long modelStatusId = Long.parseLong(modelStatus);
-        Long storageId = Long.parseLong(storage);
-
 
         if (modelService.findById(id).isEmpty())
             LOGGER.warn("Model with id={} don't exist", id);
-        else if (manufacturerService.findById(manufacturerId).isEmpty() ||
-                modelStatusService.findById(modelStatusId).isEmpty() || storageService.findById(storageId).isEmpty())
-            LOGGER.warn("Links with Model don't exist");
-        else if (Objects.equals(name, ""))
-            LOGGER.warn("Model name is empty");
-        else {
-            org.netcracker.labs.My_models_manager.entities.Model model = modelService.findById(id).get();
-            try{
-                model.setModelsInSquad(Integer.parseInt(modelsInSquad));
-            } catch (NumberFormatException e){
-                model.setModelsInSquad(1);
+        else
+            if (!model.getName().isEmpty()){
+                modelService.save(model);
+                LOGGER.info("Model \"{}\" with id={} was edited successfully", model.getName(), id);
             }
-            model.setName(name);
-            model.setDescription(description);
-            model.setModelStatus(modelStatusService.findById(modelStatusId).get());
-            model.setManufacturer(manufacturerService.findById(manufacturerId).get());
-            model.setStorage(storageService.findById(storageId).get());
-            modelService.save(model);
-            LOGGER.info("Model \"{}\" with id={} was edited successfully", name, id);
-            return "redirect:/models";
-        }
-        errorText = "Wrong input data";
+            else errorText = "Wrong input data";
         return "redirect:/models";
     }
 }

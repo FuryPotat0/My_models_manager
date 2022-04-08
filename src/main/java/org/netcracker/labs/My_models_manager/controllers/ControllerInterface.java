@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public interface ControllerInterface<T> { // TODO make all controllers and storages implement interface with generic
+public interface ControllerInterface<T> {
     String getAll(@RequestParam(value = "name", required = false) String name, Model model);
 
     String deleteEntity(@PathVariable Long id);

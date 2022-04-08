@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-public class PlaceController {
+public class PlaceController implements ControllerInterface<Place> {
     @Autowired
     private PlaceService placeService;
     @Autowired
@@ -46,7 +45,7 @@ public class PlaceController {
     }
 
     @RequestMapping("/places/delete/{id}")
-    public String deletePlace(@PathVariable Long id) {
+    public String deleteEntity(@PathVariable Long id) {
         if (placeService.findById(id).isPresent()) {
             try {
                 placeService.delete(id);
@@ -63,7 +62,7 @@ public class PlaceController {
     }
 
     @PostMapping("/places/add")
-    public String addPlace(@ModelAttribute Place place) {
+    public String addEntity(@ModelAttribute Place place) {
         if (place.getRoom() != null)
             if (!place.getName().isEmpty()) {
                 placeService.save(place);
@@ -76,9 +75,9 @@ public class PlaceController {
     }
 
     @GetMapping("/places/{id}")
-    public String placeEdit(@PathVariable(value = "id") Long id, Model model) {
+    public String editEntity(@PathVariable(value = "id") Long id, Model model) {
         Optional<Place> place = placeService.findById(id);
-        LOGGER.info("User want edit Place with id={}", id);
+        LOGGER.info("User want visit Place with id={}", id);
         if (place.isPresent()) {
             ArrayList<Place> res = new ArrayList<>();
             res.add(place.get());
@@ -94,28 +93,17 @@ public class PlaceController {
     }
 
     @PostMapping("/places/{id}")
-    public String placeUpdate(@PathVariable(value = "id") Long id, @RequestParam String name,
-                              @RequestParam String description, @RequestParam String room) {
-        Long roomId = Long.parseLong(room);
+    public String updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute Place place) {
         LOGGER.info("User want edit Place with id={}", id);
 
         if (placeService.findById(id).isEmpty())
             LOGGER.warn("Place with id={} don't exist", id);
-        else if (roomService.findById(roomId).isEmpty())
-            LOGGER.warn("Room with id={} don't exist", roomId);
-        else if (Objects.equals(name, ""))
-            LOGGER.warn("Place name is empty");
         else {
-            Place place = placeService.findById(id).get();
-            place.setName(name);
-            place.setDescription(description);
-            place.setRoom(roomService.findById(roomId).get());
-            placeService.save(place);
-            LOGGER.info("Place {} with id={} was edited successfully", name, id);
-            return "redirect:/places";
+            if (!place.getName().isEmpty()){
+                placeService.save(place);
+                LOGGER.info("Place {} with id={} was edited successfully", place.getName(), id);
+            } else errorText = "Wrong input data";
         }
-
-        errorText = "Wrong input data";
         return "redirect:/places";
     }
 }

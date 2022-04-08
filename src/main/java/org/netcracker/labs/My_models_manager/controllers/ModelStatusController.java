@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-public class ModelStatusController {
+public class ModelStatusController implements ControllerInterface<ModelStatus>{
     @Autowired
     private ModelStatusService modelStatusService;
     private static final Logger LOGGER = LogManager.getLogger(ModelStatusController.class);
@@ -39,7 +38,7 @@ public class ModelStatusController {
     }
 
     @RequestMapping("/modelStatuses/delete/{id}")
-    public String deleteModelStatus(@PathVariable Long id){
+    public String deleteEntity(@PathVariable Long id){
         if (modelStatusService.findById(id).isPresent()){
             try {
                 modelStatusService.delete(id);
@@ -55,7 +54,7 @@ public class ModelStatusController {
     }
 
     @PostMapping("/modelStatuses/add")
-    public String addModelStatus(@ModelAttribute ModelStatus modelStatus){
+    public String addEntity(@ModelAttribute ModelStatus modelStatus){
         if (!modelStatus.getName().isEmpty()){
             modelStatusService.save(modelStatus);
             LOGGER.info("ModelStatus {} with id={} was added", modelStatus.getName(), modelStatus.getId());
@@ -68,7 +67,7 @@ public class ModelStatusController {
     }
 
     @GetMapping("/modelStatuses/{id}")
-    public String modelStatusEdit(@PathVariable(value = "id") Long id, Model model) {
+    public String editEntity(@PathVariable(value = "id") Long id, Model model) {
         Optional<ModelStatus> modelStatus = modelStatusService.findById(id);
         LOGGER.info("User want visit ModelStatus with id={}", id);
         if (modelStatus.isPresent()) {
@@ -84,20 +83,16 @@ public class ModelStatusController {
     }
 
     @PostMapping("/modelStatuses/{id}")
-    public String modelStatusUpdate(@PathVariable(value = "id") Long id, @RequestParam String name) {
+    public String updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute ModelStatus modelStatus) {
         LOGGER.info("User want edit ModelStatus with id={}", id);
         if (modelStatusService.findById(id).isEmpty())
             LOGGER.warn("ModelStatus with id={} don't exist", id);
-        else if (Objects.equals(name, ""))
-            LOGGER.warn("ModelStatus name is empty");
-        else {
-            ModelStatus modelStatus = modelStatusService.findById(id).get();
-            modelStatus.setName(name);
-            modelStatusService.save(modelStatus);
-            LOGGER.info("ModelStatus {} with id={} was edited successfully", name, id);
-            return "redirect:/modelStatuses";
-        }
-        errorText = "Wrong input data";
+        else
+            if (!modelStatus.getName().isEmpty()){
+                modelStatusService.save(modelStatus);
+                LOGGER.info("ModelStatus {} with id={} was edited successfully", modelStatus.getName(), id);
+            }
+            else errorText = "Wrong input data";
         return "redirect:/modelStatuses";
     }
 }
