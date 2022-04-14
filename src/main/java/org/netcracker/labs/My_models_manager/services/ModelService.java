@@ -27,7 +27,7 @@ public class ModelService implements ServiceInterface<Model> {
     }
 
     public List<Model> findAllByName(String name) {
-        return (List<Model>) modelRepository.findByNameContaining(name);
+        return modelRepository.findByNameContaining(name);
     }
 
     public Optional<Model> findById(Long id) {

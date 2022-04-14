@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,54 +18,54 @@ import java.util.Optional;
 
 @Controller
 public class ManufacturerController implements ControllerInterface<Manufacturer> {
+    private static final Logger LOGGER = LogManager.getLogger(ManufacturerController.class);
     @Autowired
     private ManufacturerService manufacturerService;
-    private static final Logger LOGGER = LogManager.getLogger(ManufacturerController.class);
-    private String errorText = "";
 
     @GetMapping("/manufacturers")
-    public String getAll(@RequestParam(value = "name", required = false) String name, Model model){
+    public String getAll(@RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "errorText", required = false) String errorText, Model model) {
         LOGGER.info("User go on ManufacturerController page");
         List<Manufacturer> manufacturers;
-        if (name != null){
+        if (name != null) {
             manufacturers = manufacturerService.findAllByName(name);
             LOGGER.info("search answers by name={}", name);
+        } else manufacturers = manufacturerService.getAll();
+
+        if (errorText != null) {
+            model.addAttribute("errorText", errorText);
         }
-        else manufacturers = manufacturerService.getAll();
         model.addAttribute("manufacturerList", manufacturers);
         model.addAttribute("manufacturersSize", manufacturers.size());
-        model.addAttribute("errorText", errorText);
-        errorText = "";
         return "Manufacturer/manufacturers";
     }
 
     @RequestMapping("/manufacturers/delete/{id}")
-    public String deleteEntity(@PathVariable Long id){
-        if (manufacturerService.findById(id).isPresent()){
+    public ModelAndView deleteEntity(@PathVariable Long id, ModelMap model) {
+        if (manufacturerService.findById(id).isPresent()) {
             try {
                 manufacturerService.delete(id);
                 LOGGER.info("Manufacturer with id={} was deleted", id);
-            }
-            catch (DataIntegrityViolationException e) {
+            } catch (DataIntegrityViolationException e) {
                 LOGGER.info("Manufacturer {} with id={} wasn't deleted",
                         manufacturerService.findById(id).get().getName(), id);
-                errorText = "Can't delete this manufacturer, remove all links to this manufacturer to delete it";
+                model.addAttribute("errorText",
+                        "Can't delete this manufacturer, remove all links to this manufacturer to delete it");
             }
         } else LOGGER.warn("Manufacturer with id={} don't exist", id);
-        return "redirect:/manufacturers";
+        return new ModelAndView("redirect:/manufacturers", model);
     }
 
     @PostMapping("/manufacturers/add")
-    public String addEntity(@ModelAttribute Manufacturer manufacturer){
-        if (!manufacturer.getName().isEmpty()){
+    public ModelAndView addEntity(@ModelAttribute Manufacturer manufacturer, ModelMap model) {
+        if (!manufacturer.getName().isEmpty()) {
             manufacturerService.save(manufacturer);
             LOGGER.info("Manufacturer {} with id={} was added", manufacturer.getName(), manufacturer.getId());
-        }
-        else{
+        } else {
             LOGGER.warn("Manufacturer wasn't added, name is empty");
-            errorText = "Wrong input data";
+            model.addAttribute("errorText", "Wrong input data");
         }
-        return "redirect:/manufacturers";
+        return new ModelAndView("redirect:/manufacturers", model);
     }
 
     @GetMapping("/manufacturers/{id}")
@@ -83,18 +85,19 @@ public class ManufacturerController implements ControllerInterface<Manufacturer>
     }
 
     @PostMapping("/manufacturers/{id}")
-    public String updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute Manufacturer manufacturer) {
+    public ModelAndView updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute Manufacturer manufacturer,
+                                     ModelMap model) {
         LOGGER.info("User want edit Manufacturer with id={}", id);
-
         if (manufacturerService.findById(id).isEmpty())
             LOGGER.warn("Manufacturer with id={} don't exist", id);
-        else
-            if (!manufacturer.getName().isEmpty()){
-                manufacturerService.save(manufacturer);
-                LOGGER.info("Manufacturer {} with id={} was edited successfully", manufacturer.getName(), id);
-            }
-            else errorText = "Wrong input data";
-        return "redirect:/manufacturers";
+        else if (!manufacturer.getName().isEmpty()) {
+            manufacturerService.save(manufacturer);
+            LOGGER.info("Manufacturer {} with id={} was edited successfully", manufacturer.getName(), id);
+        } else {
+            LOGGER.warn("Manufacturer wasn't edited, name is empty");
+            model.addAttribute("errorText", "Wrong input data");
+        }
+        return new ModelAndView("redirect:/manufacturers", model);
     }
 }
 

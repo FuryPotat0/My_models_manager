@@ -27,7 +27,7 @@ public class ManufacturerService implements ServiceInterface<Manufacturer> {
     }
 
     public List<Manufacturer> findAllByName(String name) {
-        return (List<Manufacturer>) manufacturerRepository.findByNameContaining(name);
+        return manufacturerRepository.findByNameContaining(name);
     }
 
     public Optional<Manufacturer> findById(Long id) {

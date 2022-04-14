@@ -27,7 +27,7 @@ public class StorageService implements ServiceInterface<Storage> {
     }
 
     public List<Storage> findAllByName(String name) {
-        return (List<Storage>) storageRepository.findByNameContaining(name);
+        return storageRepository.findByNameContaining(name);
     }
 
     public Optional<Storage> findById(Long id) {

@@ -27,7 +27,7 @@ public class PlaceService implements ServiceInterface<Place>{
     }
 
     public List<Place> findAllByName(String name) {
-        return (List<Place>) placeRepository.findByNameContaining(name);
+        return placeRepository.findByNameContaining(name);
     }
 
     public Optional<Place> findById(Long id) {

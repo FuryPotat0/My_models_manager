@@ -27,7 +27,7 @@ public class RoomService implements ServiceInterface<Room>{
     }
 
     public List<Room> findAllByName(String name) {
-        return (List<Room>) roomRepository.findByNameContaining(name);
+        return roomRepository.findByNameContaining(name);
     }
 
     public Optional<Room> findById(Long id) {

@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,61 +20,61 @@ import java.util.Optional;
 
 @Controller
 public class StorageController implements ControllerInterface<Storage> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageController.class);
     @Autowired
     private StorageService storageService;
     @Autowired
     private PlaceService placeService;
 
-    private String errorText = "";
-    private static final Logger LOGGER = LoggerFactory.getLogger(StorageController.class);
-
     @GetMapping("/storages")
-    public String getAll(@RequestParam(value = "name", required = false) String name, Model model) {
+    public String getAll(@RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "errorText", required = false) String errorText, Model model) {
         LOGGER.info("User go on StorageController page");
         List<Storage> storages;
-        List<Place> places;
+        List<Place> places = placeService.getAll();
         if (name != null) {
             storages = storageService.findAllByName(name);
             LOGGER.info("search answers by name={}", name);
         } else storages = storageService.getAll();
-        places = placeService.getAll();
+
+        if (errorText != null) {
+            model.addAttribute("errorText", errorText);
+        }
         model.addAttribute("storageNumber", storages.size());
         model.addAttribute("storages", storages);
         model.addAttribute("places", places);
-        model.addAttribute("errorText", errorText);
-        errorText = "";
         return "Storage/storages";
     }
 
     @RequestMapping("/storages/delete/{id}")
-    public String deleteEntity(@PathVariable Long id) {
+    public ModelAndView deleteEntity(@PathVariable Long id, ModelMap model) {
         if (storageService.findById(id).isPresent()) {
             try {
                 storageService.delete(id);
                 LOGGER.info("Storage with id={} was deleted", id);
-            }
-            catch (DataIntegrityViolationException e) {
+            } catch (DataIntegrityViolationException e) {
                 LOGGER.info("Storage {} with id={} wasn't deleted",
                         storageService.findById(id).get().getName(), id);
-                errorText = "Can't delete this storage, remove all links to this storage to delete it";
+                model.addAttribute("errorText",
+                        "Can't delete this storage, remove all links to this storage to delete it");
             }
         } else {
             LOGGER.warn("Storage with id={} don't exist", id);
         }
-        return "redirect:/storages";
+        return new ModelAndView("redirect:/storages", model);
     }
 
     @PostMapping("/storages/add")
-    public String addEntity(@ModelAttribute Storage storage) {
+    public ModelAndView addEntity(@ModelAttribute Storage storage, ModelMap model) {
         if (storage.getPlace() != null)
             if (!storage.getName().isEmpty()) {
                 storageService.save(storage);
                 LOGGER.info("Storage \"{}\" with id={} was added", storage.getName(), storage.getId());
-                return "redirect:/storages";
+                return new ModelAndView("redirect:/storages", model);
             } else LOGGER.warn("Storage wasn't added, name is empty");
         else LOGGER.warn("Storage wasn't added, Place is null");
-        errorText = "Wrong input data";
-        return "redirect:/storages";
+        model.addAttribute("errorText", "Wrong input data");
+        return new ModelAndView("redirect:/storages", model);
     }
 
     @GetMapping("/storages/{id}")
@@ -94,19 +96,21 @@ public class StorageController implements ControllerInterface<Storage> {
     }
 
     @PostMapping("/storages/{id}")
-    public String updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute Storage storage) {
+    public ModelAndView updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute Storage storage,
+                                     ModelMap model) {
         LOGGER.info("User want edit Storage with id={}", id);
-        if (storageService.findById(id).isEmpty()){
+        if (storageService.findById(id).isEmpty()) {
             LOGGER.warn("Storage with id={} don't exist", id);
-        }
-        else {
-            if (!storage.getName().isEmpty()){
+        } else {
+            if (!storage.getName().isEmpty()) {
                 storageService.save(storage);
                 LOGGER.info("Storage {} with id={} was edited successfully", storage.getName(), id);
+            } else {
+                LOGGER.warn("Storage wasn't edited, name is empty");
+                model.addAttribute("errorText", "Wrong input data");
             }
-            else  errorText = "Wrong input data";
         }
-        return "redirect:/storages";
+        return new ModelAndView("redirect:/storages", model);
     }
 }
 
