@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Places</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+<header th:insert="header :: header"></header>
+<h4>Find place</h4>
+<form method="get">
+    <input type="text" name="name" placeholder="input name">
+    <button type="submit" class="btn btn-info">search</button>
+</form>
+<h3>Add place</h3>
+<p th:text="${errorText}"></p>
+<form action="/places/add" method="post">
+    <table border="5px">
+        <tr>
+            <td>
+                <label>Place name</label>
+                <input type="text" name="name">
+            </td>
+            <td>
+                <label>Place description</label>
+                <input type="text" name="description">
+            </td>
+            <td>
+                <select class="form-control" name="room">
+                    <option value="0">select room</option>
+                    <option th:each="room : ${roomList}" th:value="${room.id}" th:text="${room.name}"></option>
+                </select>
+            </td>
+            <td>
+                <button type="submit"  class="btn btn-success">add</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<br>
+<h2 th:text="'Places  list (count of places: ' + ${placeNumber} + ')'"></h2>
+<table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
+    <tr>
+        <td>Id</td>
+        <td>name</td>
+        <td>description</td>
+        <td>room name</td>
+        <td>Delete from list</td>
+        <td>Edit</td>
+    </tr>
+    <tr th:each="place : ${placeList}">
+        <td><span th:text="${place.id}">ID</span></td>
+        <td><span th:text="${place.name}">Name</span></td>
+        <td><span th:text="${place.description}">Description</span></td>
+        <td><span th:text="${place.room.name}">Room</span></td>
+        <td><a th:href="'/places/delete/' + ${place.id}">Delete</a></td>
+        <td><a th:href="'/places/' + ${place.id}">Edit</a></td>
+    </tr>
+</table>
+</body>
+</html>
