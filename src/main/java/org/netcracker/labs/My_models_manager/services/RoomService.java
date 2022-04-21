@@ -19,6 +19,12 @@ public class RoomService implements ServiceInterface<Room>{
     }
 
     public void save(Room entity) {
+        entity.setId(System.currentTimeMillis());
+        roomRepository.save(entity);
+    }
+
+    public void save(Room entity, Long id) {
+        entity.setId(id);
         roomRepository.save(entity);
     }
 
@@ -32,5 +38,9 @@ public class RoomService implements ServiceInterface<Room>{
 
     public Optional<Room> findById(Long id) {
         return roomRepository.findById(id);
+    }
+
+    public void deleteAll() {
+        roomRepository.deleteAll();
     }
 }

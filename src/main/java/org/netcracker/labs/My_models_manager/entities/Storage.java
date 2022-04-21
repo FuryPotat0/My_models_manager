@@ -14,7 +14,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Storage {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column

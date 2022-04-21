@@ -19,6 +19,12 @@ public class StorageService implements ServiceInterface<Storage> {
     }
 
     public void save(Storage entity) {
+        entity.setId(System.currentTimeMillis());
+        storageRepository.save(entity);
+    }
+
+    public void save(Storage entity, Long id) {
+        entity.setId(id);
         storageRepository.save(entity);
     }
 
@@ -32,6 +38,10 @@ public class StorageService implements ServiceInterface<Storage> {
 
     public Optional<Storage> findById(Long id) {
         return storageRepository.findById(id);
+    }
+
+    public void deleteAll() {
+        storageRepository.deleteAll();
     }
 }
 

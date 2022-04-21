@@ -10,9 +10,13 @@ public interface ServiceInterface<T> {
 
     void save(T entity);
 
+    void save(T entity, Long id);
+
     void delete(Long id) throws DataIntegrityViolationException;
 
     List<T> findAllByName(String name);
 
     Optional<T> findById(Long id);
+
+    void deleteAll();
 }

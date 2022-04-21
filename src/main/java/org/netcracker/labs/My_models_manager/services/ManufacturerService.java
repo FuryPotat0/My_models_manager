@@ -19,6 +19,12 @@ public class ManufacturerService implements ServiceInterface<Manufacturer> {
     }
 
     public void save(Manufacturer entity) {
+        entity.setId(System.currentTimeMillis());
+        manufacturerRepository.save(entity);
+    }
+
+    public void save(Manufacturer entity, Long id) {
+        entity.setId(id);
         manufacturerRepository.save(entity);
     }
 
@@ -32,6 +38,10 @@ public class ManufacturerService implements ServiceInterface<Manufacturer> {
 
     public Optional<Manufacturer> findById(Long id) {
         return manufacturerRepository.findById(id);
+    }
+
+    public void deleteAll() {
+        manufacturerRepository.deleteAll();
     }
 }
 

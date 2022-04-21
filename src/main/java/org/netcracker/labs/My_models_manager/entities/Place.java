@@ -14,7 +14,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Place {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column
