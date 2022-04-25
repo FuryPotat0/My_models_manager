@@ -255,7 +255,7 @@ public class XmlConverter {
         return properties.item(i).getChildNodes().item(0).getTextContent();
     }
 
-    private void deleteAll() {
+    public void deleteAll() {
         modelService.deleteAll();
         storageService.deleteAll();
         placeService.deleteAll();
