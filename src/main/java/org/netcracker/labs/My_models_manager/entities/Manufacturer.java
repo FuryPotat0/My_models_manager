@@ -12,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Manufacturer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true)

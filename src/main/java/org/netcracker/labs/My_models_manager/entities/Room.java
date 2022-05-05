@@ -12,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Room {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true)

@@ -19,6 +19,12 @@ public class ModelService implements ServiceInterface<Model> {
     }
 
     public void save(Model entity) {
+        entity.setId(System.currentTimeMillis());
+        modelRepository.save(entity);
+    }
+
+    public void save(Model entity, Long id) {
+        entity.setId(id);
         modelRepository.save(entity);
     }
 
@@ -27,11 +33,15 @@ public class ModelService implements ServiceInterface<Model> {
     }
 
     public List<Model> findAllByName(String name) {
-        return (List<Model>) modelRepository.findByNameContaining(name);
+        return modelRepository.findByNameContaining(name);
     }
 
     public Optional<Model> findById(Long id) {
         return modelRepository.findById(id);
+    }
+
+    public void deleteAll() {
+        modelRepository.deleteAll();
     }
 }
 

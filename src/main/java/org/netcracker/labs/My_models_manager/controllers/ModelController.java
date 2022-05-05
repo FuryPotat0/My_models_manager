@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,34 +23,33 @@ import java.util.Optional;
 
 @Controller
 public class ModelController implements ControllerInterface<org.netcracker.labs.My_models_manager.entities.Model> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelController.class);
     @Autowired
     private ModelService modelService;
-
     @Autowired
     private StorageService storageService;
-
     @Autowired
     private ManufacturerService manufacturerService;
-
     @Autowired
     private ModelStatusService modelStatusService;
 
-    private String errorText = "";
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModelController.class);
-
     @GetMapping("/models")
-    public String getAll(@RequestParam(value = "name", required = false) String name, Model model){
+    public String getAll(@RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "errorText", required = false) String errorText, Model model) {
         LOGGER.info("User go on ModelController page");
         List<org.netcracker.labs.My_models_manager.entities.Model> models;
         List<Storage> storages;
         List<Manufacturer> manufacturers;
         List<ModelStatus> modelStatuses;
 
-        if (name != null){
+        if (name != null) {
             models = modelService.findAllByName(name);
             LOGGER.info("search answers by name={}", name);
         } else models = modelService.getAll();
 
+        if (errorText != null) {
+            model.addAttribute("errorText", errorText);
+        }
         storages = storageService.getAll();
         manufacturers = manufacturerService.getAll();
         modelStatuses = modelStatusService.getAll();
@@ -58,38 +59,37 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
         model.addAttribute("storages", storages);
         model.addAttribute("manufacturers", manufacturers);
         model.addAttribute("modelStatuses", modelStatuses);
-        model.addAttribute("errorText", errorText);
-        errorText = "";
         return "Model/models";
     }
 
     @RequestMapping("/models/delete/{id}")
-    public String deleteEntity(@PathVariable Long id) {
+    public ModelAndView deleteEntity(@PathVariable Long id, ModelMap model) {
         if (modelService.findById(id).isPresent()) {
             try {
                 modelService.delete(id);
                 LOGGER.info("Model with id={} was deleted", id);
-            }
-            catch (DataIntegrityViolationException e) {
+            } catch (DataIntegrityViolationException e) {
                 LOGGER.info("Model {} with id={} wasn't deleted",
                         modelService.findById(id).get().getName(), id);
-                errorText = "Can't delete this model, remove all links to this model to delete it";
+                model.addAttribute("errorText",
+                        "Can't delete this model, remove all links to this model to delete it");
             }
         } else LOGGER.warn("Model with id={} don't exist", id);
-        return "redirect:/models";
+        return new ModelAndView("redirect:/models", model);
     }
 
     @PostMapping("/models/add")
-    public String addEntity(@ModelAttribute org.netcracker.labs.My_models_manager.entities.Model model) {
-        if (model.getModelStatus() != null && model.getManufacturer() != null && model.getStorage() != null)
-            if (model.getName() != null) {
-                modelService.save(model);
-                LOGGER.info("Model \"{}\" with id={} was added", model.getName(), model.getId());
-                return "redirect:/models";
+    public ModelAndView addEntity(@ModelAttribute org.netcracker.labs.My_models_manager.entities.Model entity,
+            ModelMap model) {
+        if (entity.getModelStatus() != null && entity.getManufacturer() != null && entity.getStorage() != null)
+            if (entity.getName() != null) {
+                modelService.save(entity);
+                LOGGER.info("Model \"{}\" with id={} was added", entity.getName(), entity.getId());
+                return new ModelAndView("redirect:/models", model);
             } else LOGGER.warn("Model wasn't added, name is empty");
         else LOGGER.warn("Model wasn't added, one or more links are null");
-        errorText = "Wrong input data";
-        return "redirect:/models";
+        model.addAttribute("errorText","Wrong input data");
+        return new ModelAndView("redirect:/models", model);
     }
 
     @GetMapping("/models/{id}")
@@ -115,19 +115,21 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
     }
 
     @PostMapping("/models/{id}")
-    public String updateEntity(@PathVariable(value = "id") Long id,
-                               @ModelAttribute org.netcracker.labs.My_models_manager.entities.Model model) {
+    public ModelAndView updateEntity(@PathVariable(value = "id") Long id,
+                               @ModelAttribute org.netcracker.labs.My_models_manager.entities.Model entity,
+                                     ModelMap model) {
         LOGGER.info("User want edit Model with id={}", id);
 
         if (modelService.findById(id).isEmpty())
             LOGGER.warn("Model with id={} don't exist", id);
-        else
-            if (!model.getName().isEmpty()){
-                modelService.save(model);
-                LOGGER.info("Model \"{}\" with id={} was edited successfully", model.getName(), id);
-            }
-            else errorText = "Wrong input data";
-        return "redirect:/models";
+        else if (!entity.getName().isEmpty()) {
+            modelService.save(entity);
+            LOGGER.info("Model \"{}\" with id={} was edited successfully", entity.getName(), id);
+        } else{
+            LOGGER.warn("Model wasn't edited");
+            model.addAttribute("errorText", "Wrong input data");
+        }
+        return new ModelAndView("redirect:/models", model);
     }
 }
 

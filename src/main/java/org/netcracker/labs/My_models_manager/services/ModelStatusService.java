@@ -19,6 +19,12 @@ public class ModelStatusService implements ServiceInterface<ModelStatus> {
     }
 
     public void save(ModelStatus entity) {
+        entity.setId(System.currentTimeMillis());
+        modelStatusRepository.save(entity);
+    }
+
+    public void save(ModelStatus entity, Long id) {
+        entity.setId(id);
         modelStatusRepository.save(entity);
     }
 
@@ -27,11 +33,15 @@ public class ModelStatusService implements ServiceInterface<ModelStatus> {
     }
 
     public List<ModelStatus> findAllByName(String name) {
-        return (List<ModelStatus>) modelStatusRepository.findByNameContaining(name);
+        return modelStatusRepository.findByNameContaining(name);
     }
 
     public Optional<ModelStatus> findById(Long id) {
         return modelStatusRepository.findById(id);
+    }
+
+    public void deleteAll() {
+        modelStatusRepository.deleteAll();
     }
 }
 

@@ -8,62 +8,64 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class ModelStatusController implements ControllerInterface<ModelStatus>{
+public class ModelStatusController implements ControllerInterface<ModelStatus> {
+    private static final Logger LOGGER = LogManager.getLogger(ModelStatusController.class);
     @Autowired
     private ModelStatusService modelStatusService;
-    private static final Logger LOGGER = LogManager.getLogger(ModelStatusController.class);
-    private String errorText = "";
 
     @GetMapping("/modelStatuses")
-    public String getAll(@RequestParam(value = "name", required = false) String name, Model model){
+    public String getAll(@RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "errorText", required = false) String errorText, Model model) {
         LOGGER.info("User go on ModelStatusController page");
         List<ModelStatus> modelStatuses;
-        if (name != null){
+        if (name != null) {
             modelStatuses = modelStatusService.findAllByName(name);
             LOGGER.info("search answers by name={}", name);
+        } else modelStatuses = modelStatusService.getAll();
+        if (errorText != null) {
+            model.addAttribute("errorText", errorText);
         }
-        else modelStatuses = modelStatusService.getAll();
+
         model.addAttribute("modelStatusList", modelStatuses);
         model.addAttribute("modelStatusSize", modelStatuses.size());
-        model.addAttribute("errorText", errorText);
-        errorText = "";
         return "ModelStatus/model-statuses";
     }
 
     @RequestMapping("/modelStatuses/delete/{id}")
-    public String deleteEntity(@PathVariable Long id){
-        if (modelStatusService.findById(id).isPresent()){
+    public ModelAndView deleteEntity(@PathVariable Long id, ModelMap model) {
+        if (modelStatusService.findById(id).isPresent()) {
             try {
                 modelStatusService.delete(id);
                 LOGGER.info("ModelStatus with id={} was deleted", id);
-            }
-            catch (DataIntegrityViolationException e) {
+            } catch (DataIntegrityViolationException e) {
                 LOGGER.info("ModelStatus {} with id={} wasn't deleted",
                         modelStatusService.findById(id).get().getName(), id);
-                errorText = "Can't delete this ModelStatus, remove all links to this ModelStatus to delete it";
+                model.addAttribute("errorText",
+                        "Can't delete this ModelStatus, remove all links to this ModelStatus to delete it");
             }
         } else LOGGER.warn("ModelStatus with id={} don't exist", id);
-        return "redirect:/modelStatuses";
+        return new ModelAndView("redirect:/modelStatuses", model);
     }
 
     @PostMapping("/modelStatuses/add")
-    public String addEntity(@ModelAttribute ModelStatus modelStatus){
-        if (!modelStatus.getName().isEmpty()){
+    public ModelAndView addEntity(@ModelAttribute ModelStatus modelStatus, ModelMap model) {
+        if (!modelStatus.getName().isEmpty()) {
             modelStatusService.save(modelStatus);
             LOGGER.info("ModelStatus {} with id={} was added", modelStatus.getName(), modelStatus.getId());
-        }
-        else{
+        } else {
             LOGGER.warn("ModelStatus wasn't added, name is empty");
-            errorText = "Wrong input data";
+            model.addAttribute("errorText", "Wrong input data");
         }
-        return "redirect:/modelStatuses";
+        return new ModelAndView("redirect:/modelStatuses", model);
     }
 
     @GetMapping("/modelStatuses/{id}")
@@ -83,17 +85,18 @@ public class ModelStatusController implements ControllerInterface<ModelStatus>{
     }
 
     @PostMapping("/modelStatuses/{id}")
-    public String updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute ModelStatus modelStatus) {
+    public ModelAndView updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute ModelStatus modelStatus,
+                                     ModelMap model) {
         LOGGER.info("User want edit ModelStatus with id={}", id);
         if (modelStatusService.findById(id).isEmpty())
             LOGGER.warn("ModelStatus with id={} don't exist", id);
-        else
-            if (!modelStatus.getName().isEmpty()){
-                modelStatusService.save(modelStatus);
-                LOGGER.info("ModelStatus {} with id={} was edited successfully", modelStatus.getName(), id);
-            }
-            else errorText = "Wrong input data";
-        return "redirect:/modelStatuses";
+        else if (!modelStatus.getName().isEmpty()) {
+            modelStatusService.save(modelStatus);
+            LOGGER.info("ModelStatus {} with id={} was edited successfully", modelStatus.getName(), id);
+        } else {
+            model.addAttribute("errorText","Wrong input data");
+        }
+        return new ModelAndView("redirect:/modelStatuses", model);
     }
 }
 

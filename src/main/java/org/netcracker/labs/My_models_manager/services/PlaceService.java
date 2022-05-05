@@ -19,6 +19,12 @@ public class PlaceService implements ServiceInterface<Place>{
     }
 
     public void save(Place entity) {
+        entity.setId(System.currentTimeMillis());
+        placeRepository.save(entity);
+    }
+
+    public void save(Place entity, Long id) {
+        entity.setId(id);
         placeRepository.save(entity);
     }
 
@@ -27,10 +33,14 @@ public class PlaceService implements ServiceInterface<Place>{
     }
 
     public List<Place> findAllByName(String name) {
-        return (List<Place>) placeRepository.findByNameContaining(name);
+        return placeRepository.findByNameContaining(name);
     }
 
     public Optional<Place> findById(Long id) {
         return placeRepository.findById(id);
+    }
+
+    public void deleteAll() {
+        placeRepository.deleteAll();
     }
 }
