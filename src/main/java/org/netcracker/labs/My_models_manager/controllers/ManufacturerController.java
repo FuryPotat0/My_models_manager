@@ -91,7 +91,7 @@ public class ManufacturerController implements ControllerInterface<Manufacturer>
         if (manufacturerService.findById(id).isEmpty())
             LOGGER.warn("Manufacturer with id={} don't exist", id);
         else if (!manufacturer.getName().isEmpty()) {
-            manufacturerService.save(manufacturer);
+            manufacturerService.update(manufacturer);
             LOGGER.info("Manufacturer {} with id={} was edited successfully", manufacturer.getName(), id);
         } else {
             LOGGER.warn("Manufacturer wasn't edited, name is empty");
