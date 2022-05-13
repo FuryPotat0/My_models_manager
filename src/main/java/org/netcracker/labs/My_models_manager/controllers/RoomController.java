@@ -57,7 +57,6 @@ public class RoomController implements ControllerInterface<Room> {
 
     @PostMapping("/rooms/add")
     public ModelAndView addEntity(@ModelAttribute Room room, ModelMap model) {
-        roomService.save(room);
         if (!room.getName().isEmpty()) {
             roomService.save(room);
             LOGGER.info("Room {} with id={} was added", room.getName(), room.getId());

@@ -2,11 +2,11 @@ package org.netcracker.labs.My_models_manager;
 
 
 import org.hibernate.HibernateException;
-//import javax.persistence.PersistenceException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.netcracker.labs.My_models_manager.entities.Manufacturer;
+import org.netcracker.labs.My_models_manager.entities.Room;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,15 +23,13 @@ public class HibernateSessionFactoryUtil {
             try {
                 Configuration configuration = new Configuration().configure();
                 configuration.addAnnotatedClass(Manufacturer.class);
-
+                //configuration.addAnnotatedClass(Room.class);
 
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
             } catch (Exception e) {
                 LOGGER.error(e.toString());
                 LOGGER.error(e.getMessage());
-            } catch (HibernateException e) {
-                e.printStackTrace();
             }
         }
         return sessionFactory;

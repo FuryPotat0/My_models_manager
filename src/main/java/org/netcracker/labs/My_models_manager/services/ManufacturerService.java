@@ -24,11 +24,7 @@ public class ManufacturerService implements ServiceInterface<Manufacturer> {
     }
 
     public void save(Manufacturer entity, Long id) {
-        try {
-            manufacturerDao.save(entity, id);
-        } catch (HibernateException e) {
-            e.printStackTrace();
-        }
+        manufacturerDao.save(entity, id);
     }
 
     public void update(Manufacturer entity) {
