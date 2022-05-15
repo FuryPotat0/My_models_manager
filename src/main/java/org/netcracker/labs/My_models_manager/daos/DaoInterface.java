@@ -1,5 +1,6 @@
 package org.netcracker.labs.My_models_manager.daos;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface DaoInterface<T> {
     T findById(Long id);
 
     void deleteAll();
+
+    void deleteHighlighted(FormCheckboxes formCheckboxes);
 }

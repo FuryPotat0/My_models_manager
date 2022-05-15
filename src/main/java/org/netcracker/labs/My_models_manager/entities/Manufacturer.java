@@ -10,16 +10,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "manufacturer")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Manufacturer {
     @Id
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", unique = true)
+    @Column(unique = true)
     private String name;
 }
 

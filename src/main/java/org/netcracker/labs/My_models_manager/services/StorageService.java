@@ -28,6 +28,10 @@ public class StorageService implements ServiceInterface<Storage> {
         storageRepository.save(entity);
     }
 
+    public void update(Storage entity) {
+
+    }
+
     public void delete(Long id) throws DataIntegrityViolationException {
         storageRepository.deleteById(id);
     }

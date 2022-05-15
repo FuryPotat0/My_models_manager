@@ -24,6 +24,9 @@
     <logger name="org.netcracker.labs.My_models_manager.controllers" level="trace" additivity="false">
         <appender-ref ref="FILE-ROLLING" />
     </logger>
+    <logger name="org.netcracker.labs.My_models_manager.daos" level="trace" additivity="false">
+        <appender-ref ref="FILE-ROLLING" />
+    </logger>
 
     <root level="error">
         <appender-ref ref="FILE-ROLLING" />

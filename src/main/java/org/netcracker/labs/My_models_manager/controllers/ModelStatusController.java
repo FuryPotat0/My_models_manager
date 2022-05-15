@@ -2,6 +2,7 @@ package org.netcracker.labs.My_models_manager.controllers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.netcracker.labs.My_models_manager.entities.ModelStatus;
 import org.netcracker.labs.My_models_manager.services.ModelStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class ModelStatusController implements ControllerInterface<ModelStatus> {
         if (errorText != null) {
             model.addAttribute("errorText", errorText);
         }
-
+        model.addAttribute("highlighted", new FormCheckboxes());
         model.addAttribute("modelStatusList", modelStatuses);
         model.addAttribute("modelStatusSize", modelStatuses.size());
         return "ModelStatus/model-statuses";
@@ -95,6 +96,19 @@ public class ModelStatusController implements ControllerInterface<ModelStatus> {
             LOGGER.info("ModelStatus {} with id={} was edited successfully", modelStatus.getName(), id);
         } else {
             model.addAttribute("errorText","Wrong input data");
+        }
+        return new ModelAndView("redirect:/modelStatuses", model);
+    }
+
+    public ModelAndView deleteHighlighted(FormCheckboxes ids, ModelMap model) {
+        try {
+            modelStatusService.deleteHighlighted(ids);
+            LOGGER.info("Highlighted ModelStatuses were deleted");
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.warn("Highlighted ModelStatuses weren't deleted");
+            model.addAttribute("errorText",
+                    "Can't delete highlighted model statuses," +
+                            " remove all links to model statuses to delete them");
         }
         return new ModelAndView("redirect:/modelStatuses", model);
     }

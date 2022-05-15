@@ -28,6 +28,10 @@ public class ModelService implements ServiceInterface<Model> {
         modelRepository.save(entity);
     }
 
+    public void update(Model entity) {
+
+    }
+
     public void delete(Long id) throws DataIntegrityViolationException {
         modelRepository.deleteById(id);
     }

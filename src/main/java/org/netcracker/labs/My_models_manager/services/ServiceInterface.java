@@ -1,5 +1,7 @@
 package org.netcracker.labs.My_models_manager.services;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
+import org.netcracker.labs.My_models_manager.entities.Manufacturer;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
@@ -12,6 +14,8 @@ public interface ServiceInterface<T> {
 
     void save(T entity, Long id);
 
+    void update(T entity);
+
     void delete(Long id) throws DataIntegrityViolationException;
 
     List<T> findAllByName(String name);
@@ -19,4 +23,6 @@ public interface ServiceInterface<T> {
     Optional<T> findById(Long id);
 
     void deleteAll();
+
+    void deleteHighlighted(FormCheckboxes formCheckboxes);
 }

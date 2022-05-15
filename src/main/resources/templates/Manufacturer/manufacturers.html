@@ -23,28 +23,32 @@
                 <input type="text" name="name">
             </td>
             <td>
-                <button type="submit"  class="btn btn-success">add</button>
+                <button type="submit" class="btn btn-success">add</button>
             </td>
         </tr>
     </table>
 </form>
 <br>
 <h2 th:text="'Manufacturer  list (count of manufacturers: ' + ${manufacturersSize} + ')'"></h2>
-<table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
-    <tr>
-        <td>Id</td>
-        <td>name</td>
-        <td>Delete from list</td>
-        <td>Edit</td>
-    </tr>
-    <tr th:each="manufacturer : ${manufacturerList}">
-        <td><span th:text="${manufacturer.id}">ID</span></td>
-        <td><span th:text="${manufacturer.name}">Name</span></td>
-        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.id}">Delete</a></td>
-        <td><a th:href="'/manufacturers/' + ${manufacturer.id}">Edit</a></td>
-<!--        <td><a th:href="'/manufacturers/delete/' + ${manufacturer.id}">Delete</a></td>-->
-    </tr>
-</table>
 
+<form action="/manufacturers/deleteHighlighted" method="post" th:object="${highlighted}">
+    <table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
+        <tr>
+            <td></td>
+            <td>Id</td>
+            <td>name</td>
+            <td>Delete from list</td>
+            <td>Edit</td>
+        </tr>
+        <tr th:each="manufacturer : ${manufacturerList}">
+            <td><input type="checkbox" th:field="*{multiCheckboxSelectedValues}" th:value="${manufacturer.id}"></td>
+            <td><span th:text="${manufacturer.id}">ID</span></td>
+            <td><span th:text="${manufacturer.name}">Name</span></td>
+            <td><a th:href="'/manufacturers/delete/' + ${manufacturer.id}">Delete</a></td>
+            <td><a th:href="'/manufacturers/' + ${manufacturer.id}">Edit</a></td>
+        </tr>
+    </table>
+    <button type="submit">delete highlighted</button>
+</form>
 </body>
 </html>

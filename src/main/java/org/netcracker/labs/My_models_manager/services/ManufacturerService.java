@@ -1,6 +1,7 @@
 package org.netcracker.labs.My_models_manager.services;
 
 import org.hibernate.HibernateException;
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.netcracker.labs.My_models_manager.daos.ManufacturerDao;
 import org.netcracker.labs.My_models_manager.entities.Manufacturer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,10 @@ public class ManufacturerService implements ServiceInterface<Manufacturer> {
 
     public void deleteAll() {
         manufacturerDao.deleteAll();
+    }
+
+    public void deleteHighlighted(FormCheckboxes formCheckboxes) throws DataIntegrityViolationException {
+        manufacturerDao.deleteHighlighted(formCheckboxes);
     }
 }
 

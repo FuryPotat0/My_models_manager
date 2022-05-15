@@ -23,7 +23,7 @@ public class Place {
     private String description;
 
     @OneToOne(fetch = FetchType.LAZY)
-    //@NotFound(action = NotFoundAction.IGNORE)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Room room;
 }
 

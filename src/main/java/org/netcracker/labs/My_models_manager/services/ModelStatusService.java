@@ -1,7 +1,8 @@
 package org.netcracker.labs.My_models_manager.services;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
+import org.netcracker.labs.My_models_manager.daos.ModelStatusDao;
 import org.netcracker.labs.My_models_manager.entities.ModelStatus;
-import org.netcracker.labs.My_models_manager.repositories.ModelStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,36 +13,42 @@ import java.util.Optional;
 @Service
 public class ModelStatusService implements ServiceInterface<ModelStatus> {
     @Autowired
-    private ModelStatusRepository modelStatusRepository;
+    private ModelStatusDao modelStatusDao;
 
     public List<ModelStatus> getAll() {
-        return (List<ModelStatus>) modelStatusRepository.findAll();
+        return modelStatusDao.getAll();
     }
 
     public void save(ModelStatus entity) {
-        entity.setId(System.currentTimeMillis());
-        modelStatusRepository.save(entity);
+        modelStatusDao.save(entity, System.currentTimeMillis());
     }
 
     public void save(ModelStatus entity, Long id) {
-        entity.setId(id);
-        modelStatusRepository.save(entity);
+        modelStatusDao.save(entity, id);
+    }
+
+    public void update(ModelStatus entity) {
+        modelStatusDao.update(entity);
     }
 
     public void delete(Long id) throws DataIntegrityViolationException {
-        modelStatusRepository.deleteById(id);
+        modelStatusDao.delete(id);
     }
 
     public List<ModelStatus> findAllByName(String name) {
-        return modelStatusRepository.findByNameContaining(name);
+        return modelStatusDao.findAllByName(name);
     }
 
     public Optional<ModelStatus> findById(Long id) {
-        return modelStatusRepository.findById(id);
+        return Optional.of(modelStatusDao.findById(id));
     }
 
     public void deleteAll() {
-        modelStatusRepository.deleteAll();
+        modelStatusDao.deleteAll();
+    }
+
+    public void deleteHighlighted(FormCheckboxes formCheckboxes)  throws DataIntegrityViolationException  {
+        modelStatusDao.deleteHighlighted(formCheckboxes);
     }
 }
 

@@ -14,7 +14,7 @@ public class ModelStatus {
     @Id
     private Long id;
 
-    @Column(unique = true)
+    @Column
     private String name;
 }
 

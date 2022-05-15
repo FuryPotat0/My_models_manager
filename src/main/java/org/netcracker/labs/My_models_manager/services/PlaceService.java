@@ -28,6 +28,10 @@ public class PlaceService implements ServiceInterface<Place>{
         placeRepository.save(entity);
     }
 
+    public void update(Place entity) {
+
+    }
+
     public void delete(Long id) throws DataIntegrityViolationException {
         placeRepository.deleteById(id);
     }

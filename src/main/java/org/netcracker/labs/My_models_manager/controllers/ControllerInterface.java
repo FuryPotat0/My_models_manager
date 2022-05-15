@@ -1,5 +1,6 @@
 package org.netcracker.labs.My_models_manager.controllers;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,4 +19,6 @@ public interface ControllerInterface<T> {
     String editEntity(@PathVariable(value = "id") Long id, Model model);
 
     ModelAndView updateEntity(@PathVariable(value = "id") Long id, @ModelAttribute T entity, ModelMap model);
+
+    ModelAndView deleteHighlighted(@ModelAttribute("highlighted") FormCheckboxes ids, ModelMap model);
 }
