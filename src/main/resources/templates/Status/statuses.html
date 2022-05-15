@@ -9,7 +9,7 @@
 <body>
 <header th:insert="header :: header"></header>
 <p th:text="${errorText}"></p>
-<form action="/modelStatuses/add" method="post">
+<form action="/statuses/add" method="post">
     <table border="5px">
         <tr>
             <td>
@@ -23,7 +23,7 @@
     </table>
 </form>
 <br>
-<form action="/modelStatuses/deleteHighlighted" method="post" th:object="${highlighted}">
+<form action="/statuses/deleteHighlighted" method="post" th:object="${highlighted}">
     <table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
         <tr>
             <td></td>
@@ -32,12 +32,12 @@
             <td>Delete from list</td>
             <td>Edit</td>
         </tr>
-        <tr th:each="status : ${modelStatusList}">
+        <tr th:each="status : ${statusList}">
             <td><input type="checkbox" th:field="*{multiCheckboxSelectedValues}" th:value="${status.id}"></td>
             <td><span th:text="${status.id}">ID</span></td>
             <td><span th:text="${status.name}">Name</span></td>
-            <td><a th:href="'/modelStatuses/delete/' + ${status.id}">Delete</a></td>
-            <td><a th:href="'/modelStatuses/' + ${status.id}">Edit</a></td>
+            <td><a th:href="'/statuses/delete/' + ${status.id}">Delete</a></td>
+            <td><a th:href="'/statuses/' + ${status.id}">Edit</a></td>
         </tr>
     </table>
     <button type="submit">delete highlighted</button>

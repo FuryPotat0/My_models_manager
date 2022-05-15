@@ -37,7 +37,7 @@
                         <th>Id</th>
                         <th>Name</th>
                     </tr>
-                    <xsl:for-each select="ModelManagerRootXml/ModelStatuses/modelStatus">
+                    <xsl:for-each select="ModelManagerRootXml/ModelStatuses/status">
                         <tr>
                             <td>
                                 <xsl:value-of select="id"/>

@@ -1,7 +1,6 @@
 package org.netcracker.labs.My_models_manager;
 
 
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -24,8 +23,9 @@ public class HibernateSessionFactoryUtil {
                 configuration.addAnnotatedClass(Room.class);
                 configuration.addAnnotatedClass(Place.class);
                 configuration.addAnnotatedClass(Storage.class);
-                configuration.addAnnotatedClass(ModelStatus.class);
+                configuration.addAnnotatedClass(Status.class);
                 configuration.addAnnotatedClass(Model.class);
+//                configuration.addAnnotatedClass(SuperEntity.class);
 
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());

@@ -37,9 +37,9 @@
                 </select>
             </td>
             <td>
-                <select class="form-control" name="modelStatus">
+                <select class="form-control" name="status">
                     <option value="0">select model status</option>
-                    <option th:each="modelStatus : ${modelStatuses}" th:value="${modelStatus.id}" th:text="${modelStatus.name}"></option>
+                    <option th:each="status : ${statuses}" th:value="${status.id}" th:text="${status.name}"></option>
                 </select>
             </td>
             <td>
@@ -56,29 +56,35 @@
 </form>
 <br>
 <h2 th:text="'Models  list (count of places: ' + ${modelNumber} + ')'"></h2>
-<table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
-    <tr>
-        <td>Id</td>
-        <td>name</td>
-        <td>description</td>
-        <td>models number</td>
-        <td>manufacturer name</td>
-        <td>model status name</td>
-        <td>storage name</td>
-        <td>Delete from list</td>
-        <td>Edit</td>
-    </tr>
-    <tr th:each="model : ${models}">
-        <td><span th:text="${model.id}">ID</span></td>
-        <td><span th:text="${model.name}">Name</span></td>
-        <td><span th:text="${model.description}">Description</span></td>
-        <td><span th:text="${model.modelsInSquad}">Models number</span></td>
-        <td><span th:text="${model.manufacturer.name}">Manufacturer</span></td>
-        <td><span th:text="${model.modelStatus.name}">Model status</span></td>
-        <td><span th:text="${model.storage.name}">Storage</span></td>
-        <td><a th:href="'/models/delete/' + ${model.id}">Delete</a></td>
-        <td><a th:href="'/models/' + ${model.id}">Edit</a></td>
-    </tr>
-</table>
+
+<form action="/models/deleteHighlighted" method="post" th:object="${highlighted}">
+    <table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
+        <tr>
+            <td></td>
+            <td>Id</td>
+            <td>name</td>
+            <td>description</td>
+            <td>models number</td>
+            <td>manufacturer name</td>
+            <td>model status name</td>
+            <td>storage name</td>
+            <td>Delete from list</td>
+            <td>Edit</td>
+        </tr>
+        <tr th:each="model : ${models}">
+            <td><input type="checkbox" th:field="*{multiCheckboxSelectedValues}" th:value="${model.id}"></td>
+            <td><span th:text="${model.id}">ID</span></td>
+            <td><span th:text="${model.name}">Name</span></td>
+            <td><span th:text="${model.description}">Description</span></td>
+            <td><span th:text="${model.modelsInSquad}">Models number</span></td>
+            <td><span th:text="${model.manufacturer.name}">Manufacturer</span></td>
+            <td><span th:text="${model.status.name}">Model status</span></td>
+            <td><span th:text="${model.storage.name}">Storage</span></td>
+            <td><a th:href="'/models/delete/' + ${model.id}">Delete</a></td>
+            <td><a th:href="'/models/' + ${model.id}">Edit</a></td>
+        </tr>
+    </table>
+    <button type="submit">delete highlighted</button>
+</form>
 </body>
 </html>

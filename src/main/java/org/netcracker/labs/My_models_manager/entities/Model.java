@@ -19,7 +19,7 @@ public class Model {
     @Column
     private String name;
 
-    @Column
+    @Column(name = "models_in_squad")
     private int modelsInSquad;
 
     @Column
@@ -31,7 +31,7 @@ public class Model {
 
     @OneToOne(fetch = FetchType.LAZY)
     @NotFound(action = NotFoundAction.IGNORE)
-    private ModelStatus modelStatus;
+    private Status status;
 
     @OneToOne(fetch = FetchType.LAZY)
     @NotFound(action = NotFoundAction.IGNORE)

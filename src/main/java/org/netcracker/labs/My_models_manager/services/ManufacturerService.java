@@ -16,6 +16,7 @@ public class ManufacturerService implements ServiceInterface<Manufacturer> {
     @Autowired
     private ManufacturerDao manufacturerDao;
 
+
     public List<Manufacturer> getAll() {
         return manufacturerDao.getAll();
     }

@@ -1,7 +1,8 @@
 package org.netcracker.labs.My_models_manager.services;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
+import org.netcracker.labs.My_models_manager.daos.StorageDao;
 import org.netcracker.labs.My_models_manager.entities.Storage;
-import org.netcracker.labs.My_models_manager.repositories.StorageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,40 +13,42 @@ import java.util.Optional;
 @Service
 public class StorageService implements ServiceInterface<Storage> {
     @Autowired
-    private StorageRepository storageRepository;
+    private StorageDao storageDao;
 
     public List<Storage> getAll() {
-        return (List<Storage>) storageRepository.findAll();
+        return storageDao.getAll();
     }
 
     public void save(Storage entity) {
-        entity.setId(System.currentTimeMillis());
-        storageRepository.save(entity);
+        storageDao.save(entity, System.currentTimeMillis());
     }
 
     public void save(Storage entity, Long id) {
-        entity.setId(id);
-        storageRepository.save(entity);
+        storageDao.save(entity, id);
     }
 
     public void update(Storage entity) {
-
+        storageDao.update(entity);
     }
 
     public void delete(Long id) throws DataIntegrityViolationException {
-        storageRepository.deleteById(id);
+        storageDao.delete(id);
     }
 
     public List<Storage> findAllByName(String name) {
-        return storageRepository.findByNameContaining(name);
+        return storageDao.findAllByName(name);
     }
 
     public Optional<Storage> findById(Long id) {
-        return storageRepository.findById(id);
+        return Optional.of(storageDao.findById(id));
     }
 
     public void deleteAll() {
-        storageRepository.deleteAll();
+        storageDao.deleteAll();
+    }
+
+    public void deleteHighlighted(FormCheckboxes formCheckboxes) throws DataIntegrityViolationException {
+        storageDao.deleteHighlighted(formCheckboxes);
     }
 }
 

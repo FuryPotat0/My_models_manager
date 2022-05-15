@@ -32,9 +32,9 @@
                     </select>
                 </td>
                 <td>
-                    <select class="form-control" name="modelStatus">
-                        <option th:value="${el.modelStatus.id}" th:text="${el.modelStatus.name} "></option>
-                        <option th:each="modelStatus : ${modelStatuses}" th:value="${modelStatus.id}" th:text="${modelStatus.name}"></option>
+                    <select class="form-control" name="status">
+                        <option th:value="${el.status.id}" th:text="${el.status.name} "></option>
+                        <option th:each="status : ${statuses}" th:value="${status.id}" th:text="${status.name}"></option>
                     </select>
                 </td>
                 <td>

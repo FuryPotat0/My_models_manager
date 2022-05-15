@@ -1,5 +1,6 @@
 package org.netcracker.labs.My_models_manager.controllers;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.netcracker.labs.My_models_manager.entities.Place;
 import org.netcracker.labs.My_models_manager.entities.Storage;
 import org.netcracker.labs.My_models_manager.services.PlaceService;
@@ -40,6 +41,7 @@ public class StorageController implements ControllerInterface<Storage> {
         if (errorText != null) {
             model.addAttribute("errorText", errorText);
         }
+        model.addAttribute("highlighted", new FormCheckboxes());
         model.addAttribute("storageNumber", storages.size());
         model.addAttribute("storages", storages);
         model.addAttribute("places", places);
@@ -103,12 +105,26 @@ public class StorageController implements ControllerInterface<Storage> {
             LOGGER.warn("Storage with id={} don't exist", id);
         } else {
             if (!storage.getName().isEmpty()) {
-                storageService.save(storage);
+                storageService.update(storage);
                 LOGGER.info("Storage {} with id={} was edited successfully", storage.getName(), id);
             } else {
                 LOGGER.warn("Storage wasn't edited, name is empty");
                 model.addAttribute("errorText", "Wrong input data");
             }
+        }
+        return new ModelAndView("redirect:/storages", model);
+    }
+
+    @PostMapping("/storages/deleteHighlighted")
+    public ModelAndView deleteHighlighted(FormCheckboxes ids, ModelMap model) {
+        try {
+            storageService.deleteHighlighted(ids);
+            LOGGER.info("Highlighted Storages were deleted");
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.warn("Highlighted Storages weren't deleted");
+            model.addAttribute("errorText",
+                    "Can't delete highlighted storages," +
+                            " remove all links to storages to delete them");
         }
         return new ModelAndView("redirect:/storages", model);
     }
