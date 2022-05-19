@@ -1,5 +1,6 @@
 package org.netcracker.labs.My_models_manager.controllers;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.netcracker.labs.My_models_manager.entities.Place;
 import org.netcracker.labs.My_models_manager.entities.Room;
 import org.netcracker.labs.My_models_manager.services.PlaceService;
@@ -39,6 +40,7 @@ public class PlaceController implements ControllerInterface<Place> {
         if (errorText != null) {
             model.addAttribute("errorText", errorText);
         }
+        model.addAttribute("highlighted", new FormCheckboxes());
         model.addAttribute("placeNumber", places.size());
         model.addAttribute("placeList", places);
         model.addAttribute("roomList", rooms);
@@ -100,12 +102,26 @@ public class PlaceController implements ControllerInterface<Place> {
             LOGGER.warn("Place with id={} don't exist", id);
         else {
             if (!place.getName().isEmpty()) {
-                placeService.save(place);
+                placeService.update(place);
                 LOGGER.info("Place {} with id={} was edited successfully", place.getName(), id);
             } else{
                 LOGGER.warn("Place wasn't edited, name is empty");
                 model.addAttribute("errorText", "Wrong input data");
             }
+        }
+        return new ModelAndView("redirect:/places", model);
+    }
+
+    @PostMapping("/places/deleteHighlighted")
+    public ModelAndView deleteHighlighted(FormCheckboxes ids, ModelMap model) {
+        try {
+            placeService.deleteHighlighted(ids);
+            LOGGER.info("Highlighted Places were deleted");
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.warn("Highlighted Places weren't deleted");
+            model.addAttribute("errorText",
+                    "Can't delete highlighted Places," +
+                            " remove all links to Places to delete them");
         }
         return new ModelAndView("redirect:/places", model);
     }

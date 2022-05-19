@@ -1,13 +1,11 @@
-package org.netcracker.labs.My_models_manager.services;
+package org.netcracker.labs.My_models_manager.daos;
 
 import org.netcracker.labs.My_models_manager.FormCheckboxes;
-import org.netcracker.labs.My_models_manager.entities.Manufacturer;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ServiceInterface<T> {
+public interface DaoInterface<T> {
     List<T> getAll();
 
     void save(T entity);
@@ -20,7 +18,7 @@ public interface ServiceInterface<T> {
 
     List<T> findAllByName(String name);
 
-    Optional<T> findById(Long id);
+    T findById(Long id);
 
     void deleteAll();
 

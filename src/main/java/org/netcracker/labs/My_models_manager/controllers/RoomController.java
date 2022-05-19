@@ -1,5 +1,6 @@
 package org.netcracker.labs.My_models_manager.controllers;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.netcracker.labs.My_models_manager.entities.Room;
 import org.netcracker.labs.My_models_manager.services.RoomService;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class RoomController implements ControllerInterface<Room> {
             model.addAttribute("errorText", errorText);
         }
         model.addAttribute("roomNumber", rooms.size());
+        model.addAttribute("highlighted", new FormCheckboxes());
         model.addAttribute("roomList", rooms);
         return "Room/rooms";
     }
@@ -57,7 +59,6 @@ public class RoomController implements ControllerInterface<Room> {
 
     @PostMapping("/rooms/add")
     public ModelAndView addEntity(@ModelAttribute Room room, ModelMap model) {
-        roomService.save(room);
         if (!room.getName().isEmpty()) {
             roomService.save(room);
             LOGGER.info("Room {} with id={} was added", room.getName(), room.getId());
@@ -89,13 +90,26 @@ public class RoomController implements ControllerInterface<Room> {
         if (roomService.findById(id).isEmpty())
             LOGGER.warn("Room with id={} don't exist", id);
         else if (!room.getName().isEmpty()) {
-            roomService.save(room);
+            roomService.update(room);
             LOGGER.info("Room {} with id={} was edited successfully", room.getName(), id);
         } else{
             LOGGER.warn("Room wasn't edited, name is empty");
             model.addAttribute("errorText", "Wrong input data");
         }
         return new ModelAndView("redirect:/rooms", model);
+    }
+
+    @PostMapping("/rooms/deleteHighlighted")
+    public ModelAndView deleteHighlighted(@ModelAttribute("highlighted") FormCheckboxes ids, ModelMap model) {
+        try {
+            roomService.deleteHighlighted(ids);
+            LOGGER.info("Highlighted Rooms were deleted");
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.warn("Highlighted Rooms weren't deleted");
+            model.addAttribute("errorText",
+                    "Can't delete highlighted rooms, remove all links to rooms to delete them");
+        }
+        return new ModelAndView("redirect:/manufacturers", model);
     }
 }
 

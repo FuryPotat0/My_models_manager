@@ -34,7 +34,7 @@ public class XmlConverter {
     private ManufacturerService manufacturerService;
 
     @Autowired
-    private ModelStatusService modelStatusService;
+    private StatusService statusService;
 
     @Autowired
     private RoomService roomService;
@@ -104,16 +104,16 @@ public class XmlConverter {
 
         Element modelStatus;
         Element id, name;
-        for (ModelStatus modelStatus1 : modelStatusService.getAll()) {
+        for (Status status1 : statusService.getAll()) {
             modelStatus = newDoc.createElement("modelStatus");
             modelStatuses.appendChild(modelStatus);
 
             id = newDoc.createElement("id");
-            id.appendChild(newDoc.createTextNode(modelStatus1.getId().toString()));
+            id.appendChild(newDoc.createTextNode(status1.getId().toString()));
             modelStatus.appendChild(id);
 
             name = newDoc.createElement("name");
-            name.appendChild(newDoc.createTextNode(modelStatus1.getName()));
+            name.appendChild(newDoc.createTextNode(status1.getName()));
             modelStatus.appendChild(name);
         }
         LOGGER.info("ModelStatuses marshalling done");
@@ -229,7 +229,7 @@ public class XmlConverter {
             model.appendChild(manufacturerId);
 
             modelStatusId = newDoc.createElement("modelStatusId");
-            modelStatusId.appendChild(newDoc.createTextNode(model1.getModelStatus().getId().toString()));
+            modelStatusId.appendChild(newDoc.createTextNode(model1.getStatus().getId().toString()));
             model.appendChild(modelStatusId);
 
             storageId = newDoc.createElement("storageId");
@@ -259,9 +259,9 @@ public class XmlConverter {
         modelService.deleteAll();
         storageService.deleteAll();
         placeService.deleteAll();
-        roomService.getAll();
+        roomService.deleteAll();
         manufacturerService.deleteAll();
-        modelStatusService.deleteAll();
+        statusService.deleteAll();
         LOGGER.info("All data was deleted");
     }
 
@@ -297,9 +297,9 @@ public class XmlConverter {
             modelStatus = modelStatuses.item(i);
             modelStatusProperties = modelStatus.getChildNodes();
 
-            ModelStatus modelStatus1 = new ModelStatus();
-            modelStatus1.setName(getIProperty(modelStatusProperties, 1));
-            modelStatusService.save(modelStatus1, Long.parseLong(getIProperty(modelStatusProperties, 0)));
+            Status status1 = new Status();
+            status1.setName(getIProperty(modelStatusProperties, 1));
+            statusService.save(status1, Long.parseLong(getIProperty(modelStatusProperties, 0)));
         }
         LOGGER.info("ModelStatuses unmarshalling done");
     }
@@ -370,7 +370,7 @@ public class XmlConverter {
             if (modelProperties.item(3).getChildNodes().item(0) != null)
                 model1.setDescription(getIProperty(modelProperties, 3));
             model1.setManufacturer(manufacturerService.findById(Long.parseLong(getIProperty(modelProperties, 4))).get());
-            model1.setModelStatus(modelStatusService.findById(Long.parseLong(getIProperty(modelProperties, 5))).get());
+            model1.setStatus(statusService.findById(Long.parseLong(getIProperty(modelProperties, 5))).get());
             model1.setStorage(storageService.findById(Long.parseLong(getIProperty(modelProperties, 6))).get());
 
             modelService.save(model1, Long.parseLong(getIProperty(modelProperties, 0)));

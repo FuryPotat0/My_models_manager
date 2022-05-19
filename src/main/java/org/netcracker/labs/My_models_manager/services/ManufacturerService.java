@@ -1,7 +1,9 @@
 package org.netcracker.labs.My_models_manager.services;
 
+import org.hibernate.HibernateException;
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
+import org.netcracker.labs.My_models_manager.daos.ManufacturerDao;
 import org.netcracker.labs.My_models_manager.entities.Manufacturer;
-import org.netcracker.labs.My_models_manager.repositories.ManufacturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,36 +14,43 @@ import java.util.Optional;
 @Service
 public class ManufacturerService implements ServiceInterface<Manufacturer> {
     @Autowired
-    private ManufacturerRepository manufacturerRepository;
+    private ManufacturerDao manufacturerDao;
+
 
     public List<Manufacturer> getAll() {
-        return (List<Manufacturer>) manufacturerRepository.findAll();
+        return manufacturerDao.getAll();
     }
 
     public void save(Manufacturer entity) {
-        entity.setId(System.currentTimeMillis());
-        manufacturerRepository.save(entity);
+        manufacturerDao.save(entity, System.currentTimeMillis());
     }
 
     public void save(Manufacturer entity, Long id) {
-        entity.setId(id);
-        manufacturerRepository.save(entity);
+        manufacturerDao.save(entity, id);
+    }
+
+    public void update(Manufacturer entity) {
+        manufacturerDao.update(entity);
     }
 
     public void delete(Long id) throws DataIntegrityViolationException {
-        manufacturerRepository.deleteById(id);
+        manufacturerDao.delete(id);
     }
 
     public List<Manufacturer> findAllByName(String name) {
-        return manufacturerRepository.findByNameContaining(name);
+        return manufacturerDao.findAllByName(name);
     }
 
     public Optional<Manufacturer> findById(Long id) {
-        return manufacturerRepository.findById(id);
+        return Optional.of(manufacturerDao.findById(id));
     }
 
     public void deleteAll() {
-        manufacturerRepository.deleteAll();
+        manufacturerDao.deleteAll();
+    }
+
+    public void deleteHighlighted(FormCheckboxes formCheckboxes) throws DataIntegrityViolationException {
+        manufacturerDao.deleteHighlighted(formCheckboxes);
     }
 }
 

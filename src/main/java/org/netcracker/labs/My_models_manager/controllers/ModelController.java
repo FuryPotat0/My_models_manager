@@ -1,11 +1,12 @@
 package org.netcracker.labs.My_models_manager.controllers;
 
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.netcracker.labs.My_models_manager.entities.Manufacturer;
-import org.netcracker.labs.My_models_manager.entities.ModelStatus;
+import org.netcracker.labs.My_models_manager.entities.Status;
 import org.netcracker.labs.My_models_manager.entities.Storage;
 import org.netcracker.labs.My_models_manager.services.ManufacturerService;
 import org.netcracker.labs.My_models_manager.services.ModelService;
-import org.netcracker.labs.My_models_manager.services.ModelStatusService;
+import org.netcracker.labs.My_models_manager.services.StatusService;
 import org.netcracker.labs.My_models_manager.services.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
     @Autowired
     private ManufacturerService manufacturerService;
     @Autowired
-    private ModelStatusService modelStatusService;
+    private StatusService statusService;
 
     @GetMapping("/models")
     public String getAll(@RequestParam(value = "name", required = false) String name,
@@ -40,7 +41,7 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
         List<org.netcracker.labs.My_models_manager.entities.Model> models;
         List<Storage> storages;
         List<Manufacturer> manufacturers;
-        List<ModelStatus> modelStatuses;
+        List<Status> statuses;
 
         if (name != null) {
             models = modelService.findAllByName(name);
@@ -52,13 +53,14 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
         }
         storages = storageService.getAll();
         manufacturers = manufacturerService.getAll();
-        modelStatuses = modelStatusService.getAll();
+        statuses = statusService.getAll();
 
+        model.addAttribute("highlighted", new FormCheckboxes());
         model.addAttribute("modelNumber", models.size());
         model.addAttribute("models", models);
         model.addAttribute("storages", storages);
         model.addAttribute("manufacturers", manufacturers);
-        model.addAttribute("modelStatuses", modelStatuses);
+        model.addAttribute("statuses", statuses);
         return "Model/models";
     }
 
@@ -81,7 +83,7 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
     @PostMapping("/models/add")
     public ModelAndView addEntity(@ModelAttribute org.netcracker.labs.My_models_manager.entities.Model entity,
             ModelMap model) {
-        if (entity.getModelStatus() != null && entity.getManufacturer() != null && entity.getStorage() != null)
+        if (entity.getStatus() != null && entity.getManufacturer() != null && entity.getStorage() != null)
             if (entity.getName() != null) {
                 modelService.save(entity);
                 LOGGER.info("Model \"{}\" with id={} was added", entity.getName(), entity.getId());
@@ -101,11 +103,11 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
             res.add(modelOptional.get());
             List<Storage> storages = storageService.getAll();
             List<Manufacturer> manufacturers = manufacturerService.getAll();
-            List<ModelStatus> modelStatuses = modelStatusService.getAll();
+            List<Status> statuses = statusService.getAll();
             model.addAttribute("models", res);
             model.addAttribute("storages", storages);
             model.addAttribute("manufacturers", manufacturers);
-            model.addAttribute("modelStatuses", modelStatuses);
+            model.addAttribute("statuses", statuses);
             LOGGER.info("Model \"{}\" with id={} will be edited", modelOptional.get().getName(), id);
             return "Model/model-edit";
         } else {
@@ -123,11 +125,25 @@ public class ModelController implements ControllerInterface<org.netcracker.labs.
         if (modelService.findById(id).isEmpty())
             LOGGER.warn("Model with id={} don't exist", id);
         else if (!entity.getName().isEmpty()) {
-            modelService.save(entity);
+            modelService.update(entity);
             LOGGER.info("Model \"{}\" with id={} was edited successfully", entity.getName(), id);
         } else{
             LOGGER.warn("Model wasn't edited");
             model.addAttribute("errorText", "Wrong input data");
+        }
+        return new ModelAndView("redirect:/models", model);
+    }
+
+    @PostMapping("/models/deleteHighlighted")
+    public ModelAndView deleteHighlighted(FormCheckboxes ids, ModelMap model) {
+        try {
+            modelService.deleteHighlighted(ids);
+            LOGGER.info("Highlighted models were deleted");
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.warn("Highlighted models weren't deleted");
+            model.addAttribute("errorText",
+                    "Can't delete highlighted models," +
+                            " remove all links to models to delete them");
         }
         return new ModelAndView("redirect:/models", model);
     }

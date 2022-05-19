@@ -10,11 +10,12 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ModelStatus {
+@Table(name = "status")
+public class Status {
     @Id
     private Long id;
 
-    @Column(unique = true)
+    @Column
     private String name;
 }
 

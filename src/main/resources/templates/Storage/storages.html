@@ -40,23 +40,29 @@
 </form>
 <br>
 <h2 th:text="'Storages  list (count of storages: ' + ${storageNumber} + ')'"></h2>
-<table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
-    <tr>
-        <td>Id</td>
-        <td>name</td>
-        <td>description</td>
-        <td>place name</td>
-        <td>Delete from list</td>
-        <td>Edit</td>
-    </tr>
-    <tr th:each="storage : ${storages}">
-        <td><span th:text="${storage.id}">ID</span></td>
-        <td><span th:text="${storage.name}">Name</span></td>
-        <td><span th:text="${storage.description}">Description</span></td>
-        <td><span th:text="${storage.place.name}">Place</span></td>
-        <td><a th:href="'/storages/delete/' + ${storage.id}">Delete</a></td>
-        <td><a th:href="'/storages/' + ${storage.id}">Edit</a></td>
-    </tr>
-</table>
+
+<form action="/storages/deleteHighlighted" method="post" th:object="${highlighted}">
+    <table border="2px" rules="cols" cellpadding="10" align="center" width="99%">
+        <tr>
+            <td></td>
+            <td>Id</td>
+            <td>name</td>
+            <td>description</td>
+            <td>place name</td>
+            <td>Delete from list</td>
+            <td>Edit</td>
+        </tr>
+        <tr th:each="storage : ${storages}">
+            <td><input type="checkbox" th:field="*{multiCheckboxSelectedValues}" th:value="${storage.id}"></td>
+            <td><span th:text="${storage.id}">ID</span></td>
+            <td><span th:text="${storage.name}">Name</span></td>
+            <td><span th:text="${storage.description}">Description</span></td>
+            <td><span th:text="${storage.place.name}">Place</span></td>
+            <td><a th:href="'/storages/delete/' + ${storage.id}">Delete</a></td>
+            <td><a th:href="'/storages/' + ${storage.id}">Edit</a></td>
+        </tr>
+    </table>
+    <button type="submit">delete highlighted</button>
+</form>
 </body>
 </html>

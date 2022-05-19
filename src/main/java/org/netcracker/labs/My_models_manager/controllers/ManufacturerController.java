@@ -1,7 +1,9 @@
 package org.netcracker.labs.My_models_manager.controllers;
 
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.netcracker.labs.My_models_manager.FormCheckboxes;
 import org.netcracker.labs.My_models_manager.entities.Manufacturer;
 import org.netcracker.labs.My_models_manager.services.ManufacturerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,7 @@ public class ManufacturerController implements ControllerInterface<Manufacturer>
             model.addAttribute("errorText", errorText);
         }
         model.addAttribute("manufacturerList", manufacturers);
+        model.addAttribute("highlighted", new FormCheckboxes());
         model.addAttribute("manufacturersSize", manufacturers.size());
         return "Manufacturer/manufacturers";
     }
@@ -91,11 +94,25 @@ public class ManufacturerController implements ControllerInterface<Manufacturer>
         if (manufacturerService.findById(id).isEmpty())
             LOGGER.warn("Manufacturer with id={} don't exist", id);
         else if (!manufacturer.getName().isEmpty()) {
-            manufacturerService.save(manufacturer);
+            manufacturerService.update(manufacturer);
             LOGGER.info("Manufacturer {} with id={} was edited successfully", manufacturer.getName(), id);
         } else {
             LOGGER.warn("Manufacturer wasn't edited, name is empty");
             model.addAttribute("errorText", "Wrong input data");
+        }
+        return new ModelAndView("redirect:/manufacturers", model);
+    }
+
+    @PostMapping("/manufacturers/deleteHighlighted")
+    public ModelAndView deleteHighlighted(@ModelAttribute("highlighted") FormCheckboxes ids, ModelMap model) {
+        try {
+            manufacturerService.deleteHighlighted(ids);
+            LOGGER.info("Highlighted Manufacturers were deleted");
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.warn("Highlighted Manufacturers weren't deleted");
+            model.addAttribute("errorText",
+                    "Can't delete highlighted manufacturers," +
+                            " remove all links to manufacturers to delete them");
         }
         return new ModelAndView("redirect:/manufacturers", model);
     }
